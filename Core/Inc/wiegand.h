@@ -8,15 +8,23 @@
 #ifndef WIEGAND_H_
 #define WIEGAND_H_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "main.h"
 
+    void ReadD0(); // interrupt
+    void ReadD1(); // interrupt
+    uint8_t wig_available();
+    //uint8_t DoWiegandConversion();
+    uint32_t GetCardId(volatile uint32_t *codehigh, volatile uint32_t *codelow, uint8_t bitlength);
+    uint32_t getCode();
+    int16_t getWiegandType();
 
-void ReadD0(); // interrupt
-void ReadD1(); // interrupt
-uint8_t wig_available();
-//uint8_t DoWiegandConversion();
-uint32_t GetCardId(volatile uint32_t *codehigh, volatile uint32_t *codelow, uint8_t bitlength);
-uint32_t getCode();
-int16_t getWiegandType();
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* WIEGAND_H_ */

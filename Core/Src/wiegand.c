@@ -6,6 +6,7 @@
  */
 
 #include "wiegand.h"
+#include <stdint.h>
 
 volatile uint32_t cardTempHigh = 0;
 volatile uint32_t cardTemp = 0;

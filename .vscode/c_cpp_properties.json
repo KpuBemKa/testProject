@@ -14,7 +14,12 @@
         "STM32F103xG",
         "USE_HAL_DRIVER"
       ],
-      "compilerPath": "E:\\DEV\\TOOLS\\GCC-ARM-NONE-EABI-10-2020-Q4-MAJOR\\BIN\\ARM-NONE-EABI-GCC.EXE"
+      "compilerPath": "E:\\DEV\\TOOLS\\GCC-ARM-NONE-EABI-10-2020-Q4-MAJOR\\BIN\\ARM-NONE-EABI-G++.EXE",
+      "intelliSenseMode": "gcc-arm",
+      "compilerArgs": [
+        "-mcpu=cortex-m3",
+        "-mthumb"
+      ]
     }
   ],
   "version": 4
