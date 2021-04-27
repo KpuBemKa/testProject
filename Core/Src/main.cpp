@@ -39,11 +39,6 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-#ifndef __cplusplus
-typedef unsigned char bool;
-static const bool false = 0;
-static const bool true = 1;
-#endif
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -83,7 +78,7 @@ static void MX_USART1_UART_Init(void);
    * TempOpenMode,
    * AlarmMode
   */
-  enum WorkMode workMode = NormalMode, previousWorkMode = NormalMode;
+  WorkMode workMode = NormalMode, previousWorkMode = NormalMode;
 
   enum States
   {
@@ -96,7 +91,7 @@ static void MX_USART1_UART_Init(void);
    * ClosedState,
    * NullState
   */
-  enum States doorState = ClosedState, relayState = ClosedState;
+  States doorState = ClosedState, relayState = ClosedState;
 
   enum RelayMode
   {
@@ -120,20 +115,20 @@ static void MX_USART1_UART_Init(void);
 
   // was button to open the door pressed?
   bool
-  insideButtonPressed = false,
-  outsideButtonPressed = false,
-  insideKeyRead = false;
-  outsideKeyRead = false;
-  firstTime = false,
-  doorRecentlyClosed = false,
-  alarmTrigger = false,
-  toBlink = false;
+    insideButtonPressed = false,
+    outsideButtonPressed = false,
+    insideKeyRead = false,
+    outsideKeyRead = false,
+    firstTime = false,
+    doorRecentlyClosed = false,
+    alarmTrigger = false,
+    toBlink = false;
 
   uint32_t
-  relayUnlockingTime = 0,
-  timmeTrack = 0,
-  blinkTime = 0;
-  blinkStart = 0;
+    relayUnlockingTime = 0,
+    timmeTrack = 0,
+    blinkTime = 0,
+    blinkStart = 0;
 
 
   // enum Direction
@@ -166,10 +161,10 @@ static void MX_USART1_UART_Init(void);
   bool verifyCode(uint32_t code);
   void UART_Printf(const char *fmt, ...);
   void switchMode();
-  void blink();
   void unlockDoor();
+  void unlockRelay();
   void lockDoor();
-  void doorChangedState(enum States currentState);
+  void doorChangedState(States currentState);
 
 /* USER CODE END 0 */
 
@@ -321,7 +316,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, Zumer1_Pin|Zumer2_Pin|GreenLed_1_Pin|GreenLed_2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, Zumer1_Pin|Zumer2_Pin|GreenLed_1_Pin|GreenLed_2_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : D_01_Pin D_11_Pin D_02_Pin D_12_Pin */
   GPIO_InitStruct.Pin = D_01_Pin|D_11_Pin|D_02_Pin|D_12_Pin;
@@ -392,16 +387,6 @@ void changeModeEvent()
   }
 }
 
-void blinkEvent()
-{
-  if(toBlink && (HAL_GetTick() - blinkStart) > blinkTime)
-  {
-    HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, SET);
-    HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, SET);
-    toBlink = false;
-  }
-}
-
 /**
  * @brief Event for acting when intercom key was inserted
  * @retval None
@@ -416,6 +401,7 @@ void intercomKeyEvent()
     if(outsideKeyRead)
       UART_Printf("Outside reader was used.\r\n");
 
+    if(verifyCode(getCode()))
     switch(workMode)
     {
       case NormalMode:
@@ -427,7 +413,6 @@ void intercomKeyEvent()
 
       case OpenMode:
       case TempOpenMode:
-        blink(100);
         break;
 
       case CondOpenMode:
@@ -459,22 +444,26 @@ void buttonPressedEvent()
     {
       case NormalMode:
       case ClosedMode:
+      {
         unlockRelay();
+        previousWorkMode = workMode;
+        workMode = TempOpenMode;
         break;
-
+      }
       case OpenMode:
       case TempOpenMode:
-        blink(100);
+      {
         break;
-
+      }
       case CondOpenMode:
+      {
         workMode = OpenMode;
-        HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, RESET);
-        HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, RESET);
         break;
-
+      }
       default:
-        break;
+      {
+        break;  
+      }
     }
     outsideButtonPressed = false;
     insideButtonPressed = false;
@@ -504,7 +493,7 @@ void doorClosedEvent()
   if(doorState == ClosedState)
   {
     //relay closing mechanics
-    relayState == ClosedState;
+    relayState = ClosedState;
   }
 }
 
@@ -513,15 +502,23 @@ void greenLightEvent()
   switch(relayState)
   {
     case ClosedState:
-      HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, SET);
-      HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, SET);
+    {
+      HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, GPIO_PIN_SET);
       break;
+    }
     case OpenedState:
-      HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, RESET);
-      HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, RESET);
+    {
+      HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, GPIO_PIN_RESET);
       break;
+    }
     default:
-      UART_Printf("Unknown relay state.\r\n");
+    {
+      HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, GPIO_PIN_SET);
+      break;
+    }
   }
 }
 
@@ -635,23 +632,34 @@ void UART_Printf(const char *fmt, ...)
 */
 void switchMode()
 {
-  if(workMode < 3)
+  switch(workMode)
   {
-    workMode++;
-  }
-  else if(workMode == 3)
-  {
-    workMode = 0;
-  }
-  else
-  {
-    UART_Printf("Mode is higher than 3. \r\n");
-  }
-
-  if(workMode == 2)
-  {
-    HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, RESET);
-    HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, RESET);
+    case NormalMode:
+    {
+      workMode = ClosedMode;
+      break;
+    }
+    case ClosedMode:
+    {
+      workMode = OpenMode;
+      break;
+    }
+    case OpenMode:
+    {
+      workMode = CondOpenMode;
+      break;
+    }
+    case CondOpenMode:
+    {
+      workMode = NormalMode;
+      break;
+    }
+    default:
+    {
+      UART_Printf("Unknown mode switched to normal.\r\n");
+      workMode = NormalMode;
+      break;
+    }
   }
 
   UART_Printf("Switched to mode %d\r\n", workMode);
@@ -659,14 +667,14 @@ void switchMode()
   return;
 }
 
-void blink(uint16_t blinkDurration)
-{
-  toBlink = true;
-  blinkTime = blinkDurration;
-  blinkStart = HAL_GetTick();
-  HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, RESET);
-  HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, RESET);
-}
+// void blink(uint16_t blinkDurration)
+// {
+//   toBlink = true;
+//   blinkTime = blinkDurration;
+//   blinkStart = HAL_GetTick();
+//   HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, RESET);
+//   HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, RESET);
+// }
 
 void unlockRelay()
 {
@@ -674,16 +682,14 @@ void unlockRelay()
   // relay opening mechanics
   relayUnlockingTime = HAL_GetTick();
   relayState = OpenedState;
-  // previousWorkMode = workMode;
-  // workMode = 4;
 }
 
 void lockDoor()
 {
   if(doorState == ClosedState)
   {
-    HAL_GPIO_WritePin(GPIOB, GreenLed_1_Pin, SET);
-    HAL_GPIO_WritePin(GPIOB, GreenLed_2_Pin, SET);
+    //relay closing mechanics
+    relayState = ClosedState;
   }
   else
   {
