@@ -55,9 +55,6 @@ volatile uint8_t wig_flag_inrt = 1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
@@ -69,7 +66,8 @@ enum WorkMode
   OpenMode,
   CondOpenMode,
   TempOpenMode,
-  AlarmMode
+  AlarmMode,
+  NoMode
 };
 /**
    * NormalMode,
@@ -81,20 +79,20 @@ enum WorkMode
   */
 WorkMode workMode = NormalMode, previousWorkMode = NormalMode;
 
-enum States
+enum State
 {
   OpenedState,
   ClosedState,
   NullState
 };
-/**
-   * OpenedState,
-   * ClosedState,
-   * NullState
-  */
-States doorState = ClosedState, relayState = ClosedState;
 
-enum RelayMode
+enum BeepState
+{
+  Off,
+  On
+};
+
+enum RelayType
 {
   Constant,
   Impulse,
@@ -102,7 +100,6 @@ enum RelayMode
   Valve,
   Null
 };
-RelayMode relayMode = Constant;
 
 enum AlarmCause
 {
@@ -110,61 +107,253 @@ enum AlarmCause
   None
 };
 AlarmCause alarmCause = None;
+/* USER CODE BEGIN PFP */
 
-// time ticker for verifying if 15 seconds passed to switch mode
-uint32_t timme = 0;
+/*----> Functions Declaration Start <----*/
 
-// was button to open the door pressed?
+/**
+ * @brief Event to track time between modes
+ * @retval None
+*/
+void timeTrackEvent();
+/**
+ * @brief Event to change work mode every 15 seconds
+ * @retval None
+*/
+void changeModeEvent();
+/**
+ * @brief Event to check if door was [opened]/[closed] and [print]/[close relay and print]
+ * @retval None
+*/
+void doorChangedStateEvent();
+/**
+ * @brief Event to check the intercom key reader
+ * @retval None
+*/
+void intercomKeyEvent();
+/**
+ * @brief Event to check if buttons were pressed
+ * @retval None
+*/
+void buttonPressedEvent();
+/**
+ * @brief Event to check if door [is not closed]/[closed and relay is opened] and [enable alarm]/[close relay and change work mode]
+ * @retval None
+*/
+void doorCheckEvent();
+/**
+ * @brief Event to check relay state and enable/disable green light on intercoms
+ * @retval None
+*/
+void greenLightEvent();
+/**
+ * @brief Event to ring the bell when work mode is TempOpenMode
+ * @retval None
+*/
+void bellEvent();
+// not implemented yet
+void alarmEvent();
+
+/**
+ * @brief Check if given code is allowed to pass
+ * @retval bool
+*/
+bool verifyCode(uint32_t code);
+/**
+ * @brief printf
+ * @retval None
+*/
+void UART_Printf(const char *fmt, ...);
+/**
+ * @brief Switch mode depending on the current one
+ * @retval None
+*/
+void switchMode();
+
+/*----> Functions Declaration End <----*/
+
+/* USER CODE END PFP */
+
+class Door
+{
+  private:
+    State doorState;
+    bool doorStateChanged;
+
+  public:
+    Door();
+
+    Door(State doorState)
+    {
+      this->doorState = doorState;
+    }
+
+    State getDoorState()
+    {
+      return doorState;
+    }
+
+    void setDoorState(State doorState)
+    {
+      this->doorState = doorState;
+      this->doorStateChanged = true;
+    }
+
+    bool isDoorStateChanged()
+    {
+      return this ->doorStateChanged;
+    }
+
+    void setDoorStateChanged(bool doorStateChanged)
+    {
+      this ->doorStateChanged = doorStateChanged;
+    }
+};
+
+Door door = Door(ClosedState);
+
+class Relay
+{
+  private:
+    RelayType relayType;
+    State relayState;
+    uint32_t relayOpenTime;
+
+  public:
+    Relay()
+    {
+
+    }
+
+    Relay(RelayType relayType, State relayState, uint32_t relayOpenTime)
+    {
+      this->relayType = relayType;
+      this->relayState = relayState;
+      this->relayOpenTime = relayOpenTime;
+    }
+    
+    RelayType getRelayType()
+    {
+      return this->relayType;
+    }
+
+    void setRelayType(RelayType relayType)
+    {
+      this->relayType = relayType;
+    }
+
+    State getRelayState()
+    {
+      return this->relayState;
+    }
+
+    void setRelayState(State relayState)
+    {
+      if(relayState == ClosedState)
+      {
+        if(door.getDoorState() == ClosedState)
+        {
+          UART_Printf("Relay was closed.\r\n");
+          // implement relay closing mechanics
+          this->relayState = relayState;
+        }
+        else
+        {
+          UART_Printf("Error. Door is not closed.\r\n");
+          // implement alarm mechanics
+        }
+      }
+      else if(relayState == OpenedState)
+      {
+        // implement relay opening mechanics
+        this->relayState = relayState;
+      }
+    }
+
+    uint32_t getRelayOpenTime()
+    {
+      return this ->relayOpenTime;
+    }
+
+    void setRelayOpenTime(uint32_t relayOpenTime)
+    {
+      this->relayOpenTime = relayOpenTime;
+    }
+};
+
+class Bell
+{
+  private:
+    BeepState bellState;
+    uint32_t lastBeepTime;
+    uint32_t beepStartTime;
+
+  public:
+    Bell()
+    {
+
+    }
+
+    Bell(BeepState bellState, uint32_t lastBeepTime, uint32_t beepStartTime)
+    {
+      this->bellState = bellState;
+      this->lastBeepTime = lastBeepTime;
+      this->beepStartTime = beepStartTime;
+    }
+
+    BeepState getBellState() {
+      return this->bellState;
+    }
+
+    void setBellState(BeepState bellState) {
+      this->bellState = bellState;
+
+      if(bellState == On)
+      {
+        HAL_GPIO_WritePin(Zumer1_GPIO_Port, Zumer1_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(Zumer2_GPIO_Port, Zumer2_Pin, GPIO_PIN_RESET);
+      }
+      else if(bellState == Off)
+      {
+        HAL_GPIO_WritePin(Zumer1_GPIO_Port, Zumer1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(Zumer2_GPIO_Port, Zumer2_Pin, GPIO_PIN_SET);
+      }
+    }
+
+    uint32_t getLastBeepTime() {
+      return this->lastBeepTime;
+    }
+
+    void setLastBeepTime(uint32_t lastBeepTime) {
+      this->lastBeepTime = lastBeepTime;
+    }
+
+    uint32_t getBeepStartTime() {
+      return this->beepStartTime;
+    }
+
+    void setBeepStartTime(uint32_t beepStartTime) {
+      this->beepStartTime = beepStartTime;
+    }
+};
+
 bool
   insideButtonPressed = false,
   outsideButtonPressed = false,
   insideKeyRead = false,
-  outsideKeyRead = false,
-  firstTime = false,
-  doorRecentlyClosed = false,
-  alarmTrigger = false,
-  toBlink = false;
+  outsideKeyRead = false;
 
 uint32_t
-  relayUnlockingTime = 0,
   timmeTrack = 0,
-  blinkTime = 0,
-  blinkStart = 0;
+  timme = 0;
 
-// enum Direction
-// {
-//   IN,
-//   OUT,
-//   BOTH
-// };
+/* OBJECTS START */
 
-// struct Key
-// {
-//   uint32_t code;
-//   enum Direction direction;
-//   uint32_t accessTime;
-// };
+Relay relay = Relay(Constant, ClosedState, 0);
 
-/*----> Functions Declaration <----*/
+Bell bell = Bell(Off, 0, 0);
 
-void timeTrackEvent();
-void changeModeEvent();
-void blinkEvent();
-void intercomKeyEvent();
-void buttonPressedEvent();
-void doorUnlockEvent();
-void doorClosedEvent();
-void greenLightEvent();
-void bellEvent();
-void alarmEvent();
-
-bool verifyCode(uint32_t code);
-void UART_Printf(const char *fmt, ...);
-void switchMode();
-void unlockDoor();
-void unlockRelay();
-void lockDoor();
-void doorChangedState(enum States currentState);
+/* OBJECTS END */
 
 /* USER CODE END 0 */
 
@@ -306,7 +495,6 @@ static void MX_GPIO_Init(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -329,6 +517,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+  
+  UART_Printf("\nSwitched to Normal mode.\r\n");
 
   /* USER CODE END 2 */
 
@@ -340,15 +530,13 @@ int main(void)
 
     changeModeEvent();
 
-    blinkEvent();
+    doorChangedStateEvent();
 
     intercomKeyEvent();
 
     buttonPressedEvent();
 
-    doorUnlockEvent();
-
-    doorClosedEvent();
+    doorCheckEvent();
 
     greenLightEvent();
 
@@ -368,84 +556,113 @@ int main(void)
 
 void timeTrackEvent()
 {
-  if ((HAL_GetTick() - timmeTrack) > 1000)
+  if ((HAL_GetTick() - timmeTrack) > 5000)
   {
-    UART_Printf("Time passed: %d\r\n", (HAL_GetTick() - timme));
+    UART_Printf("Time passed: %d%s\r\n", (HAL_GetTick() - timme) / 1000, " sec.");
     timmeTrack = HAL_GetTick();
   }
 }
 
-/**
-  * @brief Event for acting when it is time to change modes
-  * @retval None
-*/
 void changeModeEvent()
 {
   if ((HAL_GetTick() - timme) > 15000)
   {
-    switchMode();
     timme = HAL_GetTick();
+    switchMode();
+    UART_Printf("Work mode: %d\r\n", workMode);
   }
 }
 
 void blinkEvent()
 {
-  if (toBlink && (HAL_GetTick() - blinkStart) > blinkTime)
-  {
-    HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, GPIO_PIN_SET);
-    toBlink = false;
-  }
+  // if (toBlink && (HAL_GetTick() - blinkStart) > blinkTime)
+  // {
+  //   HAL_GPIO_WritePin(GreenLed_1_GPIO_Port, GreenLed_1_Pin, GPIO_PIN_SET);
+  //   HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, GPIO_PIN_SET);
+  //   toBlink = false;
+  // }
 }
 
-/**
- * @brief Event for acting when intercom key was inserted
- * @retval None
-*/
-void intercomKeyEvent()
+void doorChangedStateEvent()
 {
-  if (wig_available())
+  if(door.isDoorStateChanged())
   {
-    if (insideKeyRead)
-      UART_Printf("Inside reader was used.\r\n");
-
-    if (outsideKeyRead)
-      UART_Printf("Outside reader was used.\r\n");
-
-    if(verifyCode(getCode()))
-    {  
-      switch (workMode)
+    switch(door.getDoorState())
+    {
+      case OpenedState:
       {
-        case NormalMode:
-          unlockRelay();
-          UART_Printf("Code id: %d\r\n", getCode());
-          break;
-
-        case ClosedMode:
-          break;
-
-        case OpenMode:
-        case TempOpenMode:
-          break;
-
-        case CondOpenMode:
-          workMode = OpenMode;
-          unlockRelay();
-          break;
-
-        default:
-          break;
+        UART_Printf("Door was opened.\r\n");
+        break;
+      }
+      case ClosedState:
+      {
+        if(workMode == TempOpenMode)
+        {
+          workMode = previousWorkMode;
+          relay.setRelayState(ClosedState);
+        }
+        UART_Printf("Door was closed.\r\n");
+        break;
+      }
+      default:
+      {
+        break;
       }
     }
-    insideKeyRead = false;
-    outsideKeyRead = false;
+      
+    door.setDoorStateChanged(false);
   }
 }
 
-/**
- * @brief Event for acting when a button to open the door was pressed
- * @retval None
-*/
+void intercomKeyEvent()
+{
+  if(wig_available() && verifyCode(getCode()))
+  {
+    if (insideKeyRead)
+      UART_Printf("Inside key reader has been used.\r\n");
+
+    if (outsideKeyRead)
+      UART_Printf("Outside key reader has been used.\r\n");
+
+    switch (workMode)
+    {
+      case NormalMode:
+      {
+        UART_Printf("Key id: %d\r\n", getCode());
+        relay.setRelayState(OpenedState);
+        relay.setRelayOpenTime(HAL_GetTick());
+        previousWorkMode = workMode;
+        workMode = TempOpenMode;
+        break;
+      }
+      case ClosedMode:  
+      {
+        UART_Printf("Door is locked.\r\n");
+        // blink mechanics to implement
+        break;
+      }
+      case OpenMode:
+      case TempOpenMode:
+      {
+        break;
+      }
+      case CondOpenMode:
+      {
+        UART_Printf("Switched to Open mode.\r\n");
+        workMode = OpenMode;
+        relay.setRelayState(OpenedState);
+        break;
+      }
+      default:
+      {
+        break;  
+      }
+    }
+  insideKeyRead = false;
+  outsideKeyRead = false;
+  }
+}
+
 void buttonPressedEvent()
 {
   if (insideButtonPressed)
@@ -461,7 +678,10 @@ void buttonPressedEvent()
       case NormalMode:
       case ClosedMode:
       {
-        unlockRelay();
+        UART_Printf("Door has been unlocked\r\n");
+        relay.setRelayState(OpenedState);
+        relay.setRelayOpenTime(HAL_GetTick());
+        bell.setLastBeepTime(HAL_GetTick());
         previousWorkMode = workMode;
         workMode = TempOpenMode;
         break;
@@ -473,7 +693,9 @@ void buttonPressedEvent()
       }
       case CondOpenMode:
       {
+        UART_Printf("Switched to Open mode.\r\n");
         workMode = OpenMode;
+        relay.setRelayState(OpenedState);
         break;
       }
       default:
@@ -486,36 +708,24 @@ void buttonPressedEvent()
   }
 }
 
-void doorUnlockEvent()
+void doorCheckEvent()
 {
-  if (doorRecentlyClosed)
+  if( (HAL_GetTick() - relay.getRelayOpenTime()) > 5000 && door.getDoorState() == OpenedState)
   {
-    lockDoor();
-    doorRecentlyClosed = false;
+    // trigger alarm
+    UART_Printf("Alarm triggered.\r\n");
+    // workMode = AlarmMode;
   }
-
-  if ((HAL_GetTick() - relayUnlockingTime) > 10000 && !doorRecentlyClosed)
+  else if((HAL_GetTick() - relay.getRelayOpenTime()) > 5000 && door.getDoorState() == ClosedState && workMode == TempOpenMode)
   {
-    alarmCause = OpenedDoor;
-  }
-  else if (doorState == ClosedState)
-  {
-    alarmCause = None;
-  }
-}
-
-void doorClosedEvent()
-{
-  if (doorState == ClosedState)
-  {
-    //relay closing mechanics
-    relayState = ClosedState;
+    relay.setRelayState(ClosedState);
+    workMode = previousWorkMode;
   }
 }
 
 void greenLightEvent()
 {
-  switch (relayState)
+  switch (relay.getRelayState())
   {
     case ClosedState:
     {
@@ -540,6 +750,19 @@ void greenLightEvent()
 
 void bellEvent()
 {
+  if(HAL_GetTick()-relay.getRelayOpenTime() < 5000 && workMode == TempOpenMode)
+  {
+    if(HAL_GetTick()-bell.getLastBeepTime() > 250)
+    {
+      bell.setLastBeepTime(HAL_GetTick());
+      bell.setBellState(On);
+    }
+    
+    if(HAL_GetTick()-bell.getLastBeepTime() < 250 && HAL_GetTick()-bell.getLastBeepTime() > 75)
+    {
+      bell.setBellState(Off);
+    }
+  }
 }
 
 void alarmEvent()
@@ -552,70 +775,81 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   switch (GPIO_Pin)
   {
-  case BT_0_Pin:
-    insideButtonPressed = true;
-    break;
-
-  case BT_1_Pin:
-    outsideButtonPressed = true;
-    break;
-
-  case Door_Pin:
-  {
-    if (HAL_GPIO_ReadPin(Door_GPIO_Port, Door_Pin) == 0)
+    case BT_0_Pin:
     {
-      doorState = OpenedState;
+      insideButtonPressed = true;
+      break;
     }
-    else if (HAL_GPIO_ReadPin(Door_GPIO_Port, Door_Pin) == 1)
+    case BT_1_Pin:
     {
-      doorState = ClosedState;
-      doorRecentlyClosed = true;
+      outsideButtonPressed = true;
+      break;
     }
-    break;
-  }
-
-  case D_01_Pin:
-    if (wig_flag_inrt)
+    case Door_Pin:
     {
-      ReadD0();
-      insideKeyRead = true;
+      if (HAL_GPIO_ReadPin(Door_GPIO_Port, Door_Pin) == 0)
+      {
+        door.setDoorState(ClosedState);
+      }
+      else if (HAL_GPIO_ReadPin(Door_GPIO_Port, Door_Pin) == 1)
+      {
+        door.setDoorState(OpenedState);
+      }
+      break;
     }
-    break;
-
-  case D_11_Pin:
-    if (wig_flag_inrt)
+    case D_01_Pin:
     {
-      ReadD1();
-      insideKeyRead = true;
-    }
-    break;
-
-  case D_02_Pin:
-    if (wig_flag_inrt)
+      if (wig_flag_inrt)
+      {
+        ReadD0();
+        insideKeyRead = true;
+      }
+      break;
+    }    
+    case D_11_Pin:
     {
-      ReadD0();
-      outsideKeyRead = true;
+      if (wig_flag_inrt)
+      {
+        ReadD1();
+        insideKeyRead = true;
+      }
+      break;
     }
-    break;
-
-  case D_12_Pin:
-    if (wig_flag_inrt)
+    case D_02_Pin:
     {
-      ReadD1();
-      outsideKeyRead = true;
+      if (wig_flag_inrt)
+      {
+        ReadD0();
+        outsideKeyRead = true;
+      }
+      break;
     }
-    break;
-
-  default:
-    break;
+    case D_12_Pin:
+    {
+      if (wig_flag_inrt)
+      {
+        ReadD1();
+        outsideKeyRead = true;
+      }
+      break;
+    }
+    default:
+    {
+      break;
+    }
   }
 }
 
-/**
-  @brief Verify if intercom code is valid
-  @param code Intercom code to verify
-  @retval bool value
-*/
+void UART_Printf(const char *fmt, ...)
+{
+  char buff[256];
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buff, sizeof(buff), fmt, args);
+  HAL_UART_Transmit(&huart1, (uint8_t *)buff, strlen(buff), HAL_MAX_DELAY);
+  va_end(args);
+}
+
 bool verifyCode(uint32_t code)
 {
   uint32_t codes[] =
@@ -630,55 +864,46 @@ bool verifyCode(uint32_t code)
   return false;
 }
 
-/**
-  @brief Print a string to the terminal
-*/
-void UART_Printf(const char *fmt, ...)
-{
-  char buff[256];
-  va_list args;
-  va_start(args, fmt);
-  vsnprintf(buff, sizeof(buff), fmt, args);
-  HAL_UART_Transmit(&huart1, (uint8_t *)buff, strlen(buff), HAL_MAX_DELAY);
-  va_end(args);
-}
-
-/**
-  * @brief If mode is not 3, increment it. If it is, set mode to 0
-*/
 void switchMode()
 {
   switch(workMode)
   {
     case NormalMode:
     {
+      UART_Printf("\nSwitched to Closed mode.\r\n");
       workMode = ClosedMode;
+      relay.setRelayState(ClosedState);
       break;
     }
     case ClosedMode:
     {
+      UART_Printf("\nSwitched to Open mode.\r\n");
       workMode = OpenMode;
+      relay.setRelayState(OpenedState);
       break;
     }
     case OpenMode:
     {
+      UART_Printf("\nSwitched to CondOpen mode.\r\n");
       workMode = CondOpenMode;
+      relay.setRelayState(ClosedState);
       break;
     }
     case CondOpenMode:
     {
+      UART_Printf("\nSwitched to Normal mode.\r\n");
       workMode = NormalMode;
+      relay.setRelayState(ClosedState);
       break;
     }
     default:
     {
-      UART_Printf("Unknown mode switched to normal.\r\n");
+      UART_Printf("Unknown mode, switched to normal.\r\n");
       workMode = NormalMode;
+      relay.setRelayState(ClosedState);
       break;
     }
   }
-
-  UART_Printf("Switched to mode %d\r\n", workMode);
 
   return;
 }
@@ -692,26 +917,6 @@ void switchMode()
 //   HAL_GPIO_WritePin(GreenLed_2_GPIO_Port, GreenLed_2_Pin, RESET);
 // }
 
-void unlockRelay()
-{
-  UART_Printf("Unlocked the door.\r\n");
-  // relay opening mechanics
-  relayUnlockingTime = HAL_GetTick();
-  relayState = OpenedState;
-}
-
-void lockDoor()
-{
-  if (doorState == ClosedState)
-  {
-    //relay closing mechanics
-    relayState = ClosedState;
-  }
-  else
-  {
-    UART_Printf("Error. Door is not closed\r\n");
-  }
-}
 /* USER CODE END 4 */
 
 /**
