@@ -1847,7 +1847,7 @@ LOAD e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eab
                 0x0800a234        0xc build/main.o
  .ARM.extab     0x0800a240       0x18 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(pr-support.o)
 
-.ARM            0x0800a258      0x148
+.ARM            0x0800a258      0x140
                 0x0800a258                __exidx_start = .
  *(.ARM.exidx*)
  .ARM.exidx.text._Z41__static_initialization_and_destruction_0ii
@@ -1858,70 +1858,71 @@ LOAD e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eab
  .ARM.exidx.text._Z15greenLightEventv
                 0x0800a318        0x8 build/main.o
  .ARM.exidx.text._Z9bellEventv
-                0x0800a320        0x8 build/main.o
+                0x0800a320        0x0 build/main.o
+                                  0x8 (size before relaxing)
  .ARM.exidx.text.HAL_GPIO_EXTI_Callback
-                0x0800a328        0x8 build/main.o
+                0x0800a320        0x8 build/main.o
  .ARM.exidx.text._Z11UART_PrintfPKcz
-                0x0800a330        0x8 build/main.o
+                0x0800a328        0x8 build/main.o
  .ARM.exidx.text._Z14timeTrackEventv
-                0x0800a338        0x8 build/main.o
+                0x0800a330        0x8 build/main.o
  .ARM.exidx.text._Z18buttonPressedEventv
-                0x0800a340        0x8 build/main.o
+                0x0800a338        0x8 build/main.o
  .ARM.exidx.text._Z14doorCheckEventv
-                0x0800a348        0x8 build/main.o
+                0x0800a340        0x8 build/main.o
  .ARM.exidx.text._Z21doorChangedStateEventv
-                0x0800a350        0x8 build/main.o
+                0x0800a348        0x8 build/main.o
  .ARM.exidx.text._Z10verifyCodem
-                0x0800a358        0x8 build/main.o
+                0x0800a350        0x8 build/main.o
  .ARM.exidx.text._Z16intercomKeyEventv
-                0x0800a360        0x8 build/main.o
+                0x0800a358        0x8 build/main.o
  .ARM.exidx.text._Z10switchModev
-                0x0800a368        0x8 build/main.o
+                0x0800a360        0x8 build/main.o
  .ARM.exidx.text._Z15changeModeEventv
-                0x0800a370        0x8 build/main.o
+                0x0800a368        0x8 build/main.o
  .ARM.exidx.text.Error_Handler
-                0x0800a378        0x8 build/main.o
+                0x0800a370        0x8 build/main.o
  .ARM.exidx.text._Z18SystemClock_Configv
-                0x0800a380        0x8 build/main.o
+                0x0800a378        0x8 build/main.o
  .ARM.exidx.text._ZL19MX_USART1_UART_Initv
-                0x0800a388        0x8 build/main.o
+                0x0800a380        0x8 build/main.o
  .ARM.exidx.text.main
-                0x0800a390        0x8 build/main.o
+                0x0800a388        0x8 build/main.o
  .ARM.exidx.text._GLOBAL__sub_I_huart1
-                0x0800a398        0x8 build/main.o
+                0x0800a390        0x8 build/main.o
  .ARM.exidx     0x0800a258        0x8 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_udivmoddi4.o)
  .ARM.exidx     0x0800a260       0x78 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(unwind-arm.o)
                                  0xd8 (size before relaxing)
  .ARM.exidx     0x0800a2d8       0x38 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(pr-support.o)
-                0x0800a3a0                __exidx_end = .
+                0x0800a398                __exidx_end = .
 
-.rel.dyn        0x0800a3a0        0x0
- .rel.iplt      0x0800a3a0        0x0 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp/crtbegin.o
+.rel.dyn        0x0800a398        0x0
+ .rel.iplt      0x0800a398        0x0 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp/crtbegin.o
 
-.preinit_array  0x0800a3a0        0x0
-                0x0800a3a0                PROVIDE (__preinit_array_start = .)
+.preinit_array  0x0800a398        0x0
+                0x0800a398                PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
-                0x0800a3a0                PROVIDE (__preinit_array_end = .)
+                0x0800a398                PROVIDE (__preinit_array_end = .)
 
-.init_array     0x0800a3a0        0xc
-                0x0800a3a0                PROVIDE (__init_array_start = .)
+.init_array     0x0800a398        0xc
+                0x0800a398                PROVIDE (__init_array_start = .)
  *(SORT_BY_NAME(.init_array.*))
  .init_array.00000
-                0x0800a3a0        0x4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-__call_atexit.o)
+                0x0800a398        0x4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-__call_atexit.o)
  *(.init_array*)
- .init_array    0x0800a3a4        0x4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp/crtbegin.o
- .init_array    0x0800a3a8        0x4 build/main.o
-                0x0800a3ac                PROVIDE (__init_array_end = .)
+ .init_array    0x0800a39c        0x4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp/crtbegin.o
+ .init_array    0x0800a3a0        0x4 build/main.o
+                0x0800a3a4                PROVIDE (__init_array_end = .)
 
-.fini_array     0x0800a3ac        0x4
-                0x0800a3ac                PROVIDE (__fini_array_start = .)
+.fini_array     0x0800a3a4        0x4
+                0x0800a3a4                PROVIDE (__fini_array_start = .)
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array*)
- .fini_array    0x0800a3ac        0x4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp/crtbegin.o
-                0x0800a3b0                PROVIDE (__fini_array_end = .)
-                0x0800a3b0                _sidata = LOADADDR (.data)
+ .fini_array    0x0800a3a4        0x4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp/crtbegin.o
+                0x0800a3a8                PROVIDE (__fini_array_end = .)
+                0x0800a3a8                _sidata = LOADADDR (.data)
 
-.data           0x20000000      0x9c0 load address 0x0800a3b0
+.data           0x20000000      0x9c0 load address 0x0800a3a8
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _sdata = .
  *(.data)
@@ -1964,11 +1965,11 @@ LOAD e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eab
                 0x200009c0                . = ALIGN (0x4)
                 0x200009c0                _edata = .
 
-.igot.plt       0x200009c0        0x0 load address 0x0800ad70
+.igot.plt       0x200009c0        0x0 load address 0x0800ad68
  .igot.plt      0x200009c0        0x0 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp/crtbegin.o
                 0x200009c0                . = ALIGN (0x4)
 
-.bss            0x200009c0       0xec load address 0x0800ad70
+.bss            0x200009c0       0xec load address 0x0800ad68
                 0x200009c0                _sbss = .
                 0x200009c0                __bss_start__ = _sbss
  *(.bss)
@@ -2063,7 +2064,7 @@ LOAD e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eab
                 0x20000aac                __bss_end__ = _ebss
 
 ._user_heap_stack
-                0x20000aac      0x604 load address 0x0800ad70
+                0x20000aac      0x604 load address 0x0800ad68
                 0x20000ab0                . = ALIGN (0x8)
  *fill*         0x20000aac        0x4 
                 0x20000ab0                PROVIDE (end = .)
@@ -2268,46 +2269,46 @@ LOAD e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eab
 LOAD e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libm.a
 LOAD e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a
 
-.debug_info     0x00000000     0x8f25
- .debug_info    0x00000000     0x27f8 build/main.o
- .debug_info    0x000027f8      0xb32 build/stm32f1xx_hal_msp.o
- .debug_info    0x0000332a      0x7b0 build/stm32f1xx_it.o
- .debug_info    0x00003ada      0x26e build/system_stm32f1xx.o
- .debug_info    0x00003d48      0x2fa build/wiegand.o
- .debug_info    0x00004042      0x92b build/stm32f1xx_hal.o
- .debug_info    0x0000496d     0x10fc build/stm32f1xx_hal_cortex.o
- .debug_info    0x00005a69      0x8ba build/stm32f1xx_hal_dma.o
- .debug_info    0x00006323      0x6d7 build/stm32f1xx_hal_gpio.o
- .debug_info    0x000069fa      0xb5c build/stm32f1xx_hal_rcc.o
- .debug_info    0x00007556     0x19ad build/stm32f1xx_hal_uart.o
- .debug_info    0x00008f03       0x22 build/startup_stm32f103xg.o
+.debug_info     0x00000000     0x8f26
+ .debug_info    0x00000000     0x27f9 build/main.o
+ .debug_info    0x000027f9      0xb32 build/stm32f1xx_hal_msp.o
+ .debug_info    0x0000332b      0x7b0 build/stm32f1xx_it.o
+ .debug_info    0x00003adb      0x26e build/system_stm32f1xx.o
+ .debug_info    0x00003d49      0x2fa build/wiegand.o
+ .debug_info    0x00004043      0x92b build/stm32f1xx_hal.o
+ .debug_info    0x0000496e     0x10fc build/stm32f1xx_hal_cortex.o
+ .debug_info    0x00005a6a      0x8ba build/stm32f1xx_hal_dma.o
+ .debug_info    0x00006324      0x6d7 build/stm32f1xx_hal_gpio.o
+ .debug_info    0x000069fb      0xb5c build/stm32f1xx_hal_rcc.o
+ .debug_info    0x00007557     0x19ad build/stm32f1xx_hal_uart.o
+ .debug_info    0x00008f04       0x22 build/startup_stm32f103xg.o
 
-.debug_abbrev   0x00000000     0x1a7e
- .debug_abbrev  0x00000000      0x517 build/main.o
- .debug_abbrev  0x00000517      0x1d0 build/stm32f1xx_hal_msp.o
- .debug_abbrev  0x000006e7      0x1ab build/stm32f1xx_it.o
- .debug_abbrev  0x00000892      0x140 build/system_stm32f1xx.o
- .debug_abbrev  0x000009d2      0x146 build/wiegand.o
- .debug_abbrev  0x00000b18      0x209 build/stm32f1xx_hal.o
- .debug_abbrev  0x00000d21      0x382 build/stm32f1xx_hal_cortex.o
- .debug_abbrev  0x000010a3      0x262 build/stm32f1xx_hal_dma.o
- .debug_abbrev  0x00001305      0x222 build/stm32f1xx_hal_gpio.o
- .debug_abbrev  0x00001527      0x29a build/stm32f1xx_hal_rcc.o
- .debug_abbrev  0x000017c1      0x2ab build/stm32f1xx_hal_uart.o
- .debug_abbrev  0x00001a6c       0x12 build/startup_stm32f103xg.o
+.debug_abbrev   0x00000000     0x1a8f
+ .debug_abbrev  0x00000000      0x528 build/main.o
+ .debug_abbrev  0x00000528      0x1d0 build/stm32f1xx_hal_msp.o
+ .debug_abbrev  0x000006f8      0x1ab build/stm32f1xx_it.o
+ .debug_abbrev  0x000008a3      0x140 build/system_stm32f1xx.o
+ .debug_abbrev  0x000009e3      0x146 build/wiegand.o
+ .debug_abbrev  0x00000b29      0x209 build/stm32f1xx_hal.o
+ .debug_abbrev  0x00000d32      0x382 build/stm32f1xx_hal_cortex.o
+ .debug_abbrev  0x000010b4      0x262 build/stm32f1xx_hal_dma.o
+ .debug_abbrev  0x00001316      0x222 build/stm32f1xx_hal_gpio.o
+ .debug_abbrev  0x00001538      0x29a build/stm32f1xx_hal_rcc.o
+ .debug_abbrev  0x000017d2      0x2ab build/stm32f1xx_hal_uart.o
+ .debug_abbrev  0x00001a7d       0x12 build/startup_stm32f103xg.o
 
-.debug_loc      0x00000000     0x4bf1
- .debug_loc     0x00000000      0x95d build/main.o
- .debug_loc     0x0000095d      0x129 build/stm32f1xx_hal_msp.o
- .debug_loc     0x00000a86       0xe0 build/stm32f1xx_it.o
- .debug_loc     0x00000b66       0xff build/system_stm32f1xx.o
- .debug_loc     0x00000c65      0x1d9 build/wiegand.o
- .debug_loc     0x00000e3e      0x1e1 build/stm32f1xx_hal.o
- .debug_loc     0x0000101f      0x7a4 build/stm32f1xx_hal_cortex.o
- .debug_loc     0x000017c3      0x8ea build/stm32f1xx_hal_dma.o
- .debug_loc     0x000020ad      0x551 build/stm32f1xx_hal_gpio.o
- .debug_loc     0x000025fe      0x7ee build/stm32f1xx_hal_rcc.o
- .debug_loc     0x00002dec     0x1e05 build/stm32f1xx_hal_uart.o
+.debug_loc      0x00000000     0x4bdb
+ .debug_loc     0x00000000      0x947 build/main.o
+ .debug_loc     0x00000947      0x129 build/stm32f1xx_hal_msp.o
+ .debug_loc     0x00000a70       0xe0 build/stm32f1xx_it.o
+ .debug_loc     0x00000b50       0xff build/system_stm32f1xx.o
+ .debug_loc     0x00000c4f      0x1d9 build/wiegand.o
+ .debug_loc     0x00000e28      0x1e1 build/stm32f1xx_hal.o
+ .debug_loc     0x00001009      0x7a4 build/stm32f1xx_hal_cortex.o
+ .debug_loc     0x000017ad      0x8ea build/stm32f1xx_hal_dma.o
+ .debug_loc     0x00002097      0x551 build/stm32f1xx_hal_gpio.o
+ .debug_loc     0x000025e8      0x7ee build/stm32f1xx_hal_rcc.o
+ .debug_loc     0x00002dd6     0x1e05 build/stm32f1xx_hal_uart.o
 
 .debug_aranges  0x00000000      0x6e0
  .debug_aranges
@@ -2403,88 +2404,88 @@ LOAD e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eab
  .comment       0x0000004d       0x4e build/stm32f1xx_hal_rcc.o
  .comment       0x0000004d       0x4e build/stm32f1xx_hal_uart.o
 
-.debug_frame    0x00000000     0x2ac4
- .debug_frame   0x00000000      0x214 build/main.o
- .debug_frame   0x00000214       0x64 build/stm32f1xx_hal_msp.o
- .debug_frame   0x00000278      0x138 build/stm32f1xx_it.o
- .debug_frame   0x000003b0       0x30 build/system_stm32f1xx.o
- .debug_frame   0x000003e0       0x9c build/wiegand.o
- .debug_frame   0x0000047c      0x1cc build/stm32f1xx_hal.o
- .debug_frame   0x00000648      0x148 build/stm32f1xx_hal_cortex.o
- .debug_frame   0x00000790      0x140 build/stm32f1xx_hal_dma.o
- .debug_frame   0x000008d0       0xe4 build/stm32f1xx_hal_gpio.o
- .debug_frame   0x000009b4      0x190 build/stm32f1xx_hal_rcc.o
- .debug_frame   0x00000b44      0x4e8 build/stm32f1xx_hal_uart.o
- .debug_frame   0x0000102c       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-init.o)
- .debug_frame   0x00001058       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-memset.o)
- .debug_frame   0x00001084       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strlen-stub.o)
- .debug_frame   0x000010a4       0x60 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-vsnprintf.o)
- .debug_frame   0x00001104       0x5c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-__call_atexit.o)
- .debug_frame   0x00001160       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-atexit.o)
- .debug_frame   0x00001180       0x34 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fini.o)
- .debug_frame   0x000011b4       0xb0 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-lock.o)
- .debug_frame   0x00001264       0x44 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-svfprintf.o)
- .debug_frame   0x000012a8       0x34 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-__atexit.o)
- .debug_frame   0x000012dc       0x8c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-dtoa.o)
- .debug_frame   0x00001368       0x8c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-freer.o)
- .debug_frame   0x000013f4       0x40 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-localeconv.o)
- .debug_frame   0x00001434       0x4c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-mallocr.o)
- .debug_frame   0x00001480       0x28 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-memchr-stub.o)
- .debug_frame   0x000014a8       0x30 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-mlock.o)
- .debug_frame   0x000014d8      0x260 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-mprec.o)
- .debug_frame   0x00001738       0x30 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-s_frexp.o)
- .debug_frame   0x00001768       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-sbrkr.o)
- .debug_frame   0x00001794       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strncpy.o)
- .debug_frame   0x000017c0       0x78 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-svfiprintf.o)
- .debug_frame   0x00001838       0x40 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-assert.o)
- .debug_frame   0x00001878       0x28 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-callocr.o)
- .debug_frame   0x000018a0       0x6c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fiprintf.o)
- .debug_frame   0x0000190c       0x68 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-locale.o)
- .debug_frame   0x00001974       0x4c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-mbtowc_r.o)
- .debug_frame   0x000019c0       0x40 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-memmove.o)
- .debug_frame   0x00001a00       0x48 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-reallocr.o)
- .debug_frame   0x00001a48       0x64 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-reent.o)
- .debug_frame   0x00001aac       0xdc e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-vfiprintf.o)
- .debug_frame   0x00001b88       0x3c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-wctomb_r.o)
- .debug_frame   0x00001bc4       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-wsetup.o)
- .debug_frame   0x00001bf0       0x28 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-abort.o)
- .debug_frame   0x00001c18       0x70 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fflush.o)
- .debug_frame   0x00001c88      0x154 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-findfp.o)
- .debug_frame   0x00001ddc       0x88 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fputwc.o)
- .debug_frame   0x00001e64       0x64 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fvwrite.o)
- .debug_frame   0x00001ec8       0x54 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fwalk.o)
- .debug_frame   0x00001f1c       0x70 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-makebuf.o)
- .debug_frame   0x00001f8c      0x114 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-signal.o)
- .debug_frame   0x000020a0       0x3c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-signalr.o)
- .debug_frame   0x000020dc       0x8c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-stdio.o)
- .debug_frame   0x00002168       0x40 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-wbuf.o)
- .debug_frame   0x000021a8       0x60 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-wcrtomb.o)
- .debug_frame   0x00002208       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-writer.o)
- .debug_frame   0x00002234       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-closer.o)
- .debug_frame   0x00002260       0x3c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fclose.o)
- .debug_frame   0x0000229c       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fstatr.o)
- .debug_frame   0x000022c8       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-isattyr.o)
- .debug_frame   0x000022f4       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-lseekr.o)
- .debug_frame   0x00002320       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-readr.o)
- .debug_frame   0x0000234c       0xac e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_addsubdf3.o)
- .debug_frame   0x000023f8       0x50 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldivdf3.o)
- .debug_frame   0x00002448       0xc4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_cmpdf2.o)
- .debug_frame   0x0000250c       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_unorddf2.o)
- .debug_frame   0x0000252c       0x24 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_fixdfsi.o)
- .debug_frame   0x00002550       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_aeabi_uldivmod.o)
- .debug_frame   0x0000257c       0x34 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_udivmoddi4.o)
- .debug_frame   0x000025b0      0x2e0 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(unwind-arm.o)
- .debug_frame   0x00002890       0xf4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(pr-support.o)
- .debug_frame   0x00002984       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(close.o)
- .debug_frame   0x000029a4       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(fstat.o)
- .debug_frame   0x000029c4       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(getpid.o)
- .debug_frame   0x000029e4       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(isatty.o)
- .debug_frame   0x00002a04       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(kill.o)
- .debug_frame   0x00002a24       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(lseek.o)
- .debug_frame   0x00002a44       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(read.o)
- .debug_frame   0x00002a64       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(sbrk.o)
- .debug_frame   0x00002a84       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(write.o)
- .debug_frame   0x00002aa4       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(_exit.o)
+.debug_frame    0x00000000     0x2ac0
+ .debug_frame   0x00000000      0x210 build/main.o
+ .debug_frame   0x00000210       0x64 build/stm32f1xx_hal_msp.o
+ .debug_frame   0x00000274      0x138 build/stm32f1xx_it.o
+ .debug_frame   0x000003ac       0x30 build/system_stm32f1xx.o
+ .debug_frame   0x000003dc       0x9c build/wiegand.o
+ .debug_frame   0x00000478      0x1cc build/stm32f1xx_hal.o
+ .debug_frame   0x00000644      0x148 build/stm32f1xx_hal_cortex.o
+ .debug_frame   0x0000078c      0x140 build/stm32f1xx_hal_dma.o
+ .debug_frame   0x000008cc       0xe4 build/stm32f1xx_hal_gpio.o
+ .debug_frame   0x000009b0      0x190 build/stm32f1xx_hal_rcc.o
+ .debug_frame   0x00000b40      0x4e8 build/stm32f1xx_hal_uart.o
+ .debug_frame   0x00001028       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-init.o)
+ .debug_frame   0x00001054       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-memset.o)
+ .debug_frame   0x00001080       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strlen-stub.o)
+ .debug_frame   0x000010a0       0x60 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-vsnprintf.o)
+ .debug_frame   0x00001100       0x5c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-__call_atexit.o)
+ .debug_frame   0x0000115c       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-atexit.o)
+ .debug_frame   0x0000117c       0x34 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fini.o)
+ .debug_frame   0x000011b0       0xb0 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-lock.o)
+ .debug_frame   0x00001260       0x44 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-svfprintf.o)
+ .debug_frame   0x000012a4       0x34 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-__atexit.o)
+ .debug_frame   0x000012d8       0x8c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-dtoa.o)
+ .debug_frame   0x00001364       0x8c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-freer.o)
+ .debug_frame   0x000013f0       0x40 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-localeconv.o)
+ .debug_frame   0x00001430       0x4c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-mallocr.o)
+ .debug_frame   0x0000147c       0x28 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-memchr-stub.o)
+ .debug_frame   0x000014a4       0x30 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-mlock.o)
+ .debug_frame   0x000014d4      0x260 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-mprec.o)
+ .debug_frame   0x00001734       0x30 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-s_frexp.o)
+ .debug_frame   0x00001764       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-sbrkr.o)
+ .debug_frame   0x00001790       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-strncpy.o)
+ .debug_frame   0x000017bc       0x78 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-svfiprintf.o)
+ .debug_frame   0x00001834       0x40 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-assert.o)
+ .debug_frame   0x00001874       0x28 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-callocr.o)
+ .debug_frame   0x0000189c       0x6c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fiprintf.o)
+ .debug_frame   0x00001908       0x68 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-locale.o)
+ .debug_frame   0x00001970       0x4c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-mbtowc_r.o)
+ .debug_frame   0x000019bc       0x40 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-memmove.o)
+ .debug_frame   0x000019fc       0x48 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-reallocr.o)
+ .debug_frame   0x00001a44       0x64 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-reent.o)
+ .debug_frame   0x00001aa8       0xdc e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-vfiprintf.o)
+ .debug_frame   0x00001b84       0x3c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-wctomb_r.o)
+ .debug_frame   0x00001bc0       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-wsetup.o)
+ .debug_frame   0x00001bec       0x28 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-abort.o)
+ .debug_frame   0x00001c14       0x70 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fflush.o)
+ .debug_frame   0x00001c84      0x154 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-findfp.o)
+ .debug_frame   0x00001dd8       0x88 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fputwc.o)
+ .debug_frame   0x00001e60       0x64 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fvwrite.o)
+ .debug_frame   0x00001ec4       0x54 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fwalk.o)
+ .debug_frame   0x00001f18       0x70 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-makebuf.o)
+ .debug_frame   0x00001f88      0x114 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-signal.o)
+ .debug_frame   0x0000209c       0x3c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-signalr.o)
+ .debug_frame   0x000020d8       0x8c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-stdio.o)
+ .debug_frame   0x00002164       0x40 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-wbuf.o)
+ .debug_frame   0x000021a4       0x60 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-wcrtomb.o)
+ .debug_frame   0x00002204       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-writer.o)
+ .debug_frame   0x00002230       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-closer.o)
+ .debug_frame   0x0000225c       0x3c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fclose.o)
+ .debug_frame   0x00002298       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-fstatr.o)
+ .debug_frame   0x000022c4       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-isattyr.o)
+ .debug_frame   0x000022f0       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-lseekr.o)
+ .debug_frame   0x0000231c       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libc.a(lib_a-readr.o)
+ .debug_frame   0x00002348       0xac e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_addsubdf3.o)
+ .debug_frame   0x000023f4       0x50 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_muldivdf3.o)
+ .debug_frame   0x00002444       0xc4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_cmpdf2.o)
+ .debug_frame   0x00002508       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_unorddf2.o)
+ .debug_frame   0x00002528       0x24 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_arm_fixdfsi.o)
+ .debug_frame   0x0000254c       0x2c e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_aeabi_uldivmod.o)
+ .debug_frame   0x00002578       0x34 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(_udivmoddi4.o)
+ .debug_frame   0x000025ac      0x2e0 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(unwind-arm.o)
+ .debug_frame   0x0000288c       0xf4 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7-m/nofp\libgcc.a(pr-support.o)
+ .debug_frame   0x00002980       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(close.o)
+ .debug_frame   0x000029a0       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(fstat.o)
+ .debug_frame   0x000029c0       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(getpid.o)
+ .debug_frame   0x000029e0       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(isatty.o)
+ .debug_frame   0x00002a00       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(kill.o)
+ .debug_frame   0x00002a20       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(lseek.o)
+ .debug_frame   0x00002a40       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(read.o)
+ .debug_frame   0x00002a60       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(sbrk.o)
+ .debug_frame   0x00002a80       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(write.o)
+ .debug_frame   0x00002aa0       0x20 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(_exit.o)
 
 .stab           0x00000000       0xcc
  .stab          0x00000000       0x24 e:/dev/tools/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7-m/nofp\libnosys.a(close.o)

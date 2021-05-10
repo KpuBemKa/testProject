@@ -87,6 +87,10 @@ void Error_Handler(void);
 #define Door_Pin GPIO_PIN_8
 #define Door_GPIO_Port GPIOC
 #define Door_EXTI_IRQn EXTI9_5_IRQn
+#define Lock_Pin GPIO_PIN_8
+#define Lock_GPIO_Port GPIOB
+#define Siren_Pin GPIO_PIN_9
+#define Siren_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
