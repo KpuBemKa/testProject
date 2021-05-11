@@ -1,20 +1,6 @@
 #pragma once
 #include "stm32f1xx_hal.h"
-
-enum State
-{
-    Off,
-    On
-};
-
-enum RelayType
-{
-    Constant,
-    Impulse,
-    ConstantSwitch,
-    Valve,
-    Null
-};
+#include "State.h"
 
 class PinOut
 {
@@ -26,6 +12,10 @@ public:
     {
         this->GPIOx = GPIOx;
         this->GPIO_Pin = GPIO_Pin;
+
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        __HAL_RCC_GPIOA_CLK_ENABLE();
 
         GPIO_InitTypeDef GPIO_InitStruct = {0};
         GPIO_InitStruct.Pin = GPIO_Pin;
@@ -47,31 +37,23 @@ public:
 
     void setState(State state)
     {
-        if (state == On)
+        if (state == State::On)
         {
-            HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(this->GPIOx, this->GPIO_Pin, GPIO_PIN_SET);
         }
-        else if (state == Off)
+        else if (state == State::Off)
         {
-            HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(this->GPIOx, this->GPIO_Pin, GPIO_PIN_RESET);
         }
     }
-};
 
-class ConstantRelay : PinOut
-{
-public:
-    ConstantRelay(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
-        : PinOut(GPIOx, GPIO_Pin)
+    State getState()
     {
-    }
-};
+        if (HAL_GPIO_ReadPin(this->GPIOx, this->GPIO_Pin) == GPIO_PIN_RESET)
+        {
+            return State::Off;
+        }
 
-class ImpulseRelay : PinOut
-{
-public:
-    ImpulseRelay(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
-        : PinOut(GPIOx, GPIO_Pin)
-    {
+        return State::On;
     }
 };

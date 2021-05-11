@@ -1,10 +1,11 @@
 {
     "stm32-for-vscode.openOCDPath": "openocd",
     "stm32-for-vscode.makePath": "make",
-    "stm32-for-vscode.armToolchainPath": "",
-    "cortex-debug.armToolchainPath": "",
+    "stm32-for-vscode.armToolchainPath": "E:\\DEV\\TOOLS\\GCC-ARM-NONE-EABI-10-2020-Q4-MAJOR\\BIN",
+    "cortex-debug.armToolchainPath": "E:\\DEV\\TOOLS\\GCC-ARM-NONE-EABI-10-2020-Q4-MAJOR\\BIN",
     "files.associations": {
         "main.h": "c",
         "stdarg.h": "c"
-    }
+    },
+    "cortex-debug.openocdPath": "openocd"
 }

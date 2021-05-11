@@ -8,18 +8,24 @@
         "Drivers/CMSIS/Device/ST/STM32F1xx/Include",
         "Drivers/CMSIS/Include",
         "Drivers/STM32F1xx_HAL_Driver/Inc",
-        "Drivers/STM32F1xx_HAL_Driver/Inc/Legacy"
+        "Drivers/STM32F1xx_HAL_Driver/Inc/Legacy",
+        "Drivers/STM32F1xx_HAL_Driver/Src"
       ],
       "defines": [
         "STM32F103xG",
-        "USE_HAL_DRIVER"
+        "UNICODE",
+        "USE_HAL_DRIVER",
+        "_DEBUG",
+        "_UNICODE"
       ],
       "compilerPath": "E:\\DEV\\TOOLS\\GCC-ARM-NONE-EABI-10-2020-Q4-MAJOR\\BIN\\ARM-NONE-EABI-G++.EXE",
       "intelliSenseMode": "gcc-arm",
       "compilerArgs": [
         "-mcpu=cortex-m3",
         "-mthumb"
-      ]
+      ],
+      "cStandard": "c17",
+      "cppStandard": "c++20"
     }
   ],
   "version": 4

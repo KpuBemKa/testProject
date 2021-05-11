@@ -1,11 +1,6 @@
 #pragma once
 #include "stm32f1xx_hal.h"
-
-enum State
-{
-    Off,
-    On
-};
+#include "State.h"
 
 class PinIn
 {
@@ -34,31 +29,5 @@ public:
         }
 
         return State::Off;
-    }
-};
-
-class InterruptPin : public PinIn
-{
-    bool isStateChanged;
-
-public:
-    InterruptPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) : PinIn(GPIOx, GPIO_Pin)
-    {
-    }
-
-    bool isStateChanged()
-    {
-        if (isStateChanged == true)
-        {
-            isStateChanged = false;
-            return true;
-        }
-
-        return false;
-    }
-
-    void setStateChanged()
-    {
-        this->isStateChanged = true;
     }
 };
