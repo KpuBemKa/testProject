@@ -388,6 +388,8 @@ void TempOpenModeEvent()
 
     if (HAL_GetTick() - lockTimer.getStartTime() < 5000 && !(door.isStateChanged() && door.getState() == State::Off))
     {
+      UART_Printf("isDoorStateChanged: %d\r\n", door.isStateChanged());
+
       if (HAL_GetTick() - zumerTimer.getLastTick() > 250)
       {
         zumerTimer.setLastTick();
@@ -549,14 +551,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     {
       workMode = WorkMode::AlarmMode;
     }
-    /* if(door.getState() == State::Off)
-    {
-      UART_Printf("Door is opened.\r\n");
-    }
-    else if(door.getState() == State::On)
-    {
-      UART_Printf("Door is closed.\r\n");
-    } */
     break;
   }
   case D_01_Pin:
