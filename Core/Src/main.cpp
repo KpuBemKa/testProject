@@ -56,7 +56,7 @@ void TimeTrackEvent();
  * @brief Event to change work mode every 15 seconds
 */
 void ChangeModeEvent();
-void DoorOpenedEvent();
+void DoorSensorEvent();
 /**
  * @brief Event to listen for used intercoms
 */
@@ -131,13 +131,15 @@ PinOut insideGreenLed(GreenLed_1_GPIO_Port, GreenLed_1_Pin);
 */
 PinOut outsideGreenLed(GreenLed_2_GPIO_Port, GreenLed_2_Pin);
 
+Timer doorSensorTimer(0, 0);
 /*----------> Flags <----------*/
 
 bool
     insideButtonPressed = false,
     outsideButtonPressed = false,
     insideKeyRead = false,
-    outsideKeyRead = false;
+    outsideKeyRead = false,
+    doorSensorFirstTime = true;
 
 uint32_t
     timmeTrack = 0,
@@ -290,7 +292,7 @@ int main(void)
 
     ChangeModeEvent();
 
-    DoorOpenedEvent();
+    DoorSensorEvent();
 
     KeyReadEvent();
 
@@ -326,17 +328,33 @@ void ChangeModeEvent()
   }
 }
 
-void DoorOpenedEvent()
+void DoorSensorEvent()
 {
-  /* if(door.isStateChanged() && door.getState() == State::On)
+  if (HAL_GetTick() - doorSensorTimer.getStartTime() > 100 && doorSensorFirstTime == false)
   {
-    UART_Printf("Door was opened.\r\n");
-  } */
+    door.setStateChanged();
+
+    if (door.getState() == State::Off)
+    {
+      UART_Printf("Door was closed.\r\n");
+    }
+    else if (door.getState() == State::On)
+    {
+      UART_Printf("Door was opened.\r\n");
+    }
+
+    if (workMode != WorkMode::TempOpenMode && door.getState() == State::On)
+    {
+      workMode = WorkMode::AlarmMode;
+    }
+
+    doorSensorFirstTime = true;
+  }
 }
 
 void KeyReadEvent()
 {
-  if (wig_available())
+  if (wig_available() && workMode == WorkMode::NoMode)
   {
     if (intercomMode != IntercomMode::ClosedMode && verifyCode(getCode()))
     {
@@ -388,8 +406,6 @@ void TempOpenModeEvent()
 
     if (HAL_GetTick() - lockTimer.getStartTime() < 5000 && !(door.isStateChanged() && door.getState() == State::Off))
     {
-      UART_Printf("isDoorStateChanged: %d\r\n", door.isStateChanged());
-
       if (HAL_GetTick() - zumerTimer.getLastTick() > 250)
       {
         zumerTimer.setLastTick();
@@ -406,6 +422,10 @@ void TempOpenModeEvent()
         insideGreenLed.turnOn();
         outsideGreenLed.turnOn();
       }
+
+      if (door.getState() == State::Off)
+      {
+      }
     }
     else if (door.getState() == State::On)
     {
@@ -414,9 +434,10 @@ void TempOpenModeEvent()
     }
     else
     {
-      HAL_GetTick() - lockTimer.getStartTime() > 5000 ? UART_Printf("Door was not opened. Closing the relay.\r\n")
-                                                      : UART_Printf("Door was closed. Closing the relay.\r\n");
-
+      if (HAL_GetTick() - lockTimer.getStartTime() >= 5000)
+      {
+        UART_Printf("Door was not opened. Closing the relay.\r\n");
+      }
       if (intercomMode == IntercomMode::CondOpenMode)
       {
         UART_Printf("Current mode is Conditionally Open. Switching to Open.\r\n");
@@ -505,25 +526,26 @@ void AlarmEvent()
 
     if (firstTime)
     {
+      UART_Printf("Unauthorized access. Triggered alarm.\r\n");
       alarmTimer.start();
+      firstTime = false;
     }
 
-    if (HAL_GetTick() - alarmTimer.getStartTime() < 2000)
+    if (HAL_GetTick() - alarmTimer.getLastTick() > 1000)
     {
-      if (HAL_GetTick() - alarmTimer.getLastTick() > 1000)
-      {
-        alarmTimer.setLastTick();
-        siren.turnOn();
-      }
-      else if (HAL_GetTick() - alarmTimer.getLastTick() < 1000 && HAL_GetTick() - alarmTimer.getLastTick() > 750)
-      {
-        siren.turnOff();
-      }
+      alarmTimer.setLastTick();
+      siren.turnOn();
     }
-    else if (wig_available() /* || cancelled from server */)
+    else if (HAL_GetTick() - alarmTimer.getLastTick() < 1000 && HAL_GetTick() - alarmTimer.getLastTick() > 750)
     {
-      workMode = WorkMode::NoMode;
       siren.turnOff();
+    }
+
+    if (HAL_GetTick() - alarmTimer.getStartTime() > 2000 && ( (wig_available() && verifyCode(getCode())) /* || cancelled from server */))
+    {
+      workMode = WorkMode::TempOpenMode;
+      siren.turnOff();
+      firstTime = true;
     }
   }
 }
@@ -546,10 +568,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   }
   case Door_Pin:
   {
-    door.setStateChanged();
-    if (workMode != WorkMode::TempOpenMode && door.getState() == State::On)
+    if (doorSensorFirstTime)
     {
-      workMode = WorkMode::AlarmMode;
+      doorSensorTimer.start();
+      doorSensorFirstTime = false;
     }
     break;
   }
