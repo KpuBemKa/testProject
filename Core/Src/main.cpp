@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include "WorkMode.h"
 #include "IntercomMode.h"
+#include "InvertedPinOut.h"
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart1;
@@ -56,9 +57,12 @@ void TimeTrackEvent();
  * @brief Event to change work mode every 15 seconds
 */
 void ChangeModeEvent();
+/**
+ * @brief Event to listen for door button to avoid rattling contacts
+*/
 void DoorSensorEvent();
 /**
- * @brief Event to listen for used intercoms
+ * @brief Event to listen for intercoms
 */
 void KeyReadEvent();
 /**
@@ -117,19 +121,19 @@ PinOut siren(Siren_GPIO_Port, Siren_Pin);
 /**
  * @brief Inside intercom zumer (#1, right side)
 */
-PinOut insideZumer(Zumer1_GPIO_Port, Zumer1_Pin);
+InvertedPinOut insideZumer(Zumer1_GPIO_Port, Zumer1_Pin);
 /**
  * @brief Outside intercom zumer (#2, left side)
 */
-PinOut outsideZumer(Zumer2_GPIO_Port, Zumer2_Pin);
+InvertedPinOut outsideZumer(Zumer2_GPIO_Port, Zumer2_Pin);
 /**
  * @brief Inside intercom green led (#1, right side)
 */
-PinOut insideGreenLed(GreenLed_1_GPIO_Port, GreenLed_1_Pin);
+InvertedPinOut insideGreenLed(GreenLed_1_GPIO_Port, GreenLed_1_Pin);
 /**
  * @brief Outside intercom green led (#2, left side)
 */
-PinOut outsideGreenLed(GreenLed_2_GPIO_Port, GreenLed_2_Pin);
+InvertedPinOut outsideGreenLed(GreenLed_2_GPIO_Port, GreenLed_2_Pin);
 
 Timer doorSensorTimer(0, 0);
 /*----------> Flags <----------*/
@@ -281,10 +285,10 @@ int main(void)
   MX_USART1_UART_Init();
 
   UART_Printf("\nSwitched to Normal mode.\r\n");
-  insideGreenLed.turnOn();
-  outsideGreenLed.turnOn();
-  insideZumer.turnOn();
-  outsideZumer.turnOn();
+  insideGreenLed.turnOff();
+  outsideGreenLed.turnOff();
+  insideZumer.turnOff();
+  outsideZumer.turnOff();
 
   while (1)
   {
@@ -409,18 +413,18 @@ void TempOpenModeEvent()
       if (HAL_GetTick() - zumerTimer.getLastTick() > 250)
       {
         zumerTimer.setLastTick();
-        insideZumer.turnOff();
-        outsideZumer.turnOff();
-        insideGreenLed.turnOff();
-        outsideGreenLed.turnOff();
-      }
-
-      if (HAL_GetTick() - zumerTimer.getLastTick() > 75)
-      {
         insideZumer.turnOn();
         outsideZumer.turnOn();
         insideGreenLed.turnOn();
         outsideGreenLed.turnOn();
+      }
+
+      if (HAL_GetTick() - zumerTimer.getLastTick() > 75)
+      {
+        insideZumer.turnOff();
+        outsideZumer.turnOff();
+        insideGreenLed.turnOff();
+        outsideGreenLed.turnOff();
       }
 
       if (door.getState() == State::Off)
@@ -447,10 +451,10 @@ void TempOpenModeEvent()
       workMode = WorkMode::NoMode;
       firstTime = true;
       lock.turnOff();
-      insideZumer.turnOn();
-      outsideZumer.turnOn();
-      insideGreenLed.turnOn();
-      outsideGreenLed.turnOn();
+      insideZumer.turnOff();
+      outsideZumer.turnOff();
+      insideGreenLed.turnOff();
+      outsideGreenLed.turnOff();
     }
   }
 }
@@ -498,20 +502,20 @@ void DenyKeyEvent()
       if (HAL_GetTick() - denyTimer.getLastTick() > 150)
       {
         denyTimer.setLastTick();
-        insideZumer.turnOff();
-        outsideZumer.turnOff();
+        insideZumer.turnOn();
+        outsideZumer.turnOn();
       }
       else if (HAL_GetTick() - denyTimer.getLastTick() < 150 && HAL_GetTick() - denyTimer.getLastTick() > 75)
       {
-        insideZumer.turnOn();
-        outsideZumer.turnOn();
+        insideZumer.turnOff();
+        outsideZumer.turnOff();
       }
     }
     else
     {
       workMode = previousWorkMode;
-      insideZumer.turnOn();
-      outsideZumer.turnOn();
+      insideZumer.turnOff();
+      outsideZumer.turnOff();
       firstTime = true;
     }
   }

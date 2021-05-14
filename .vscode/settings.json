@@ -7,5 +7,5 @@
         "main.h": "c",
         "stdarg.h": "c"
     },
-    "cortex-debug.openocdPath": "openocd"
+    "cortex-debug.openocdPath": "E:\\DEV\\TOOLS\\OPENOCD-20210301-0.10.0\\BIN\\OPENOCD.EXE"
 }
