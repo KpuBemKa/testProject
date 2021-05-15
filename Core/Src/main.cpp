@@ -39,6 +39,7 @@
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart1;
 volatile uint8_t wig_flag_inrt = 1;
+
 IntercomMode intercomMode = IntercomMode::NormalMode;
 WorkMode workMode = WorkMode::NoMode, previousWorkMode = WorkMode::NoMode;
 
@@ -365,6 +366,12 @@ void KeyReadEvent()
       UART_Printf("%s intercom was used. Key id: %d.\r\n", insideKeyRead ? "Inside" : "Outside", getCode());
 
       workMode = WorkMode::TempOpenMode;
+
+      if (intercomMode == IntercomMode::CondOpenMode)
+      {
+        UART_Printf("Current mode is Conditionally Open. Switching to Open.\r\n");
+        intercomMode = IntercomMode::OpenMode;
+      }
     }
     else
     {
@@ -426,10 +433,6 @@ void TempOpenModeEvent()
         insideGreenLed.turnOff();
         outsideGreenLed.turnOff();
       }
-
-      if (door.getState() == State::Off)
-      {
-      }
     }
     else if (door.getState() == State::On)
     {
@@ -441,11 +444,6 @@ void TempOpenModeEvent()
       if (HAL_GetTick() - lockTimer.getStartTime() >= 5000)
       {
         UART_Printf("Door was not opened. Closing the relay.\r\n");
-      }
-      if (intercomMode == IntercomMode::CondOpenMode)
-      {
-        UART_Printf("Current mode is Conditionally Open. Switching to Open.\r\n");
-        intercomMode = IntercomMode::OpenMode;
       }
 
       workMode = WorkMode::NoMode;
@@ -545,7 +543,7 @@ void AlarmEvent()
       siren.turnOff();
     }
 
-    if (HAL_GetTick() - alarmTimer.getStartTime() > 2000 && ( (wig_available() && verifyCode(getCode())) /* || cancelled from server */))
+    if (HAL_GetTick() - alarmTimer.getStartTime() > 2000 && ((wig_available() && verifyCode(getCode())) /* || cancelled from server */))
     {
       workMode = WorkMode::TempOpenMode;
       siren.turnOff();

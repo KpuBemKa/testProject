@@ -1,0 +1,443 @@
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"PinOut.cpp"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text._ZN6PinOutC2EP12GPIO_TypeDeft,"ax",%progbits
+  16              		.align	1
+  17              		.global	_ZN6PinOutC2EP12GPIO_TypeDeft
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	_ZN6PinOutC2EP12GPIO_TypeDeft:
+  25              		.fnstart
+  26              	.LVL0:
+  27              	.LFB73:
+  28              		.file 1 "Core/Src/PinOut.cpp"
+   1:Core/Src/PinOut.cpp **** #include "PinOut.h"
+   2:Core/Src/PinOut.cpp **** 
+   3:Core/Src/PinOut.cpp **** PinOut::PinOut(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
+  29              		.loc 1 3 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 32
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 3 1 is_stmt 0 view .LVU1
+  34 0000 10B5     		push	{r4, lr}
+  35              		.save {r4, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 4, -8
+  39              		.cfi_offset 14, -4
+  40              		.pad #32
+  41 0002 88B0     		sub	sp, sp, #32
+  42              	.LCFI1:
+  43              		.cfi_def_cfa_offset 40
+  44 0004 0446     		mov	r4, r0
+  45 0006 0846     		mov	r0, r1
+  46              	.LVL1:
+  47              	.LBB2:
+   4:Core/Src/PinOut.cpp **** {
+   5:Core/Src/PinOut.cpp ****     this->GPIOx = GPIOx;
+  48              		.loc 1 5 5 is_stmt 1 view .LVU2
+  49              		.loc 1 5 17 is_stmt 0 view .LVU3
+  50 0008 2160     		str	r1, [r4]
+   6:Core/Src/PinOut.cpp ****     this->GPIO_Pin = GPIO_Pin;
+  51              		.loc 1 6 5 is_stmt 1 view .LVU4
+  52              		.loc 1 6 20 is_stmt 0 view .LVU5
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s 			page 2
+
+
+  53 000a A280     		strh	r2, [r4, #4]	@ movhi
+   7:Core/Src/PinOut.cpp **** 
+   8:Core/Src/PinOut.cpp ****     __HAL_RCC_GPIOC_CLK_ENABLE();
+  54              		.loc 1 8 5 is_stmt 1 view .LVU6
+  55              	.LBB3:
+  56              		.loc 1 8 5 view .LVU7
+  57              		.loc 1 8 5 view .LVU8
+  58 000c 154B     		ldr	r3, .L3
+  59 000e 9969     		ldr	r1, [r3, #24]
+  60              	.LVL2:
+  61              		.loc 1 8 5 is_stmt 0 view .LVU9
+  62 0010 41F01001 		orr	r1, r1, #16
+  63 0014 9961     		str	r1, [r3, #24]
+  64              		.loc 1 8 5 is_stmt 1 view .LVU10
+  65 0016 9969     		ldr	r1, [r3, #24]
+  66 0018 01F01001 		and	r1, r1, #16
+  67 001c 0191     		str	r1, [sp, #4]
+  68              		.loc 1 8 5 view .LVU11
+  69 001e 0199     		ldr	r1, [sp, #4]
+  70              	.LBE3:
+   9:Core/Src/PinOut.cpp ****     __HAL_RCC_GPIOB_CLK_ENABLE();
+  71              		.loc 1 9 5 view .LVU12
+  72              	.LBB4:
+  73              		.loc 1 9 5 view .LVU13
+  74              		.loc 1 9 5 view .LVU14
+  75 0020 9969     		ldr	r1, [r3, #24]
+  76 0022 41F00801 		orr	r1, r1, #8
+  77 0026 9961     		str	r1, [r3, #24]
+  78              		.loc 1 9 5 view .LVU15
+  79 0028 9969     		ldr	r1, [r3, #24]
+  80 002a 01F00801 		and	r1, r1, #8
+  81 002e 0291     		str	r1, [sp, #8]
+  82              		.loc 1 9 5 view .LVU16
+  83 0030 0299     		ldr	r1, [sp, #8]
+  84              	.LBE4:
+  10:Core/Src/PinOut.cpp ****     __HAL_RCC_GPIOA_CLK_ENABLE();
+  85              		.loc 1 10 5 view .LVU17
+  86              	.LBB5:
+  87              		.loc 1 10 5 view .LVU18
+  88              		.loc 1 10 5 view .LVU19
+  89 0032 9969     		ldr	r1, [r3, #24]
+  90 0034 41F00401 		orr	r1, r1, #4
+  91 0038 9961     		str	r1, [r3, #24]
+  92              		.loc 1 10 5 view .LVU20
+  93 003a 9B69     		ldr	r3, [r3, #24]
+  94 003c 03F00403 		and	r3, r3, #4
+  95 0040 0393     		str	r3, [sp, #12]
+  96              		.loc 1 10 5 view .LVU21
+  97 0042 039B     		ldr	r3, [sp, #12]
+  98              	.LBE5:
+  11:Core/Src/PinOut.cpp **** 
+  12:Core/Src/PinOut.cpp ****     GPIO_InitTypeDef GPIO_InitStruct = {0};
+  99              		.loc 1 12 5 view .LVU22
+ 100              		.loc 1 12 22 is_stmt 0 view .LVU23
+ 101 0044 0023     		movs	r3, #0
+ 102 0046 0493     		str	r3, [sp, #16]
+ 103 0048 0593     		str	r3, [sp, #20]
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s 			page 3
+
+
+ 104 004a 0693     		str	r3, [sp, #24]
+ 105 004c 0793     		str	r3, [sp, #28]
+  13:Core/Src/PinOut.cpp ****     GPIO_InitStruct.Pin = GPIO_Pin;
+ 106              		.loc 1 13 5 is_stmt 1 view .LVU24
+ 107              		.loc 1 13 25 is_stmt 0 view .LVU25
+ 108 004e 0492     		str	r2, [sp, #16]
+  14:Core/Src/PinOut.cpp ****     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+ 109              		.loc 1 14 5 is_stmt 1 view .LVU26
+ 110              		.loc 1 14 26 is_stmt 0 view .LVU27
+ 111 0050 0123     		movs	r3, #1
+ 112 0052 0593     		str	r3, [sp, #20]
+  15:Core/Src/PinOut.cpp ****     GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 113              		.loc 1 15 5 is_stmt 1 view .LVU28
+  16:Core/Src/PinOut.cpp ****     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+ 114              		.loc 1 16 5 view .LVU29
+ 115              		.loc 1 16 27 is_stmt 0 view .LVU30
+ 116 0054 0223     		movs	r3, #2
+ 117 0056 0793     		str	r3, [sp, #28]
+  17:Core/Src/PinOut.cpp ****     HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+ 118              		.loc 1 17 5 is_stmt 1 view .LVU31
+ 119              		.loc 1 17 18 is_stmt 0 view .LVU32
+ 120 0058 04A9     		add	r1, sp, #16
+ 121 005a FFF7FEFF 		bl	HAL_GPIO_Init
+ 122              	.LVL3:
+ 123              		.loc 1 17 18 view .LVU33
+ 124              	.LBE2:
+  18:Core/Src/PinOut.cpp **** }
+ 125              		.loc 1 18 1 view .LVU34
+ 126 005e 2046     		mov	r0, r4
+ 127 0060 08B0     		add	sp, sp, #32
+ 128              	.LCFI2:
+ 129              		.cfi_def_cfa_offset 8
+ 130              		@ sp needed
+ 131 0062 10BD     		pop	{r4, pc}
+ 132              	.LVL4:
+ 133              	.L4:
+ 134              		.loc 1 18 1 view .LVU35
+ 135              		.align	2
+ 136              	.L3:
+ 137 0064 00100240 		.word	1073876992
+ 138              		.cfi_endproc
+ 139              	.LFE73:
+ 140              		.fnend
+ 142              		.global	_ZN6PinOutC1EP12GPIO_TypeDeft
+ 143              		.thumb_set _ZN6PinOutC1EP12GPIO_TypeDeft,_ZN6PinOutC2EP12GPIO_TypeDeft
+ 144              		.section	.text._ZN6PinOut8setStateE5State,"ax",%progbits
+ 145              		.align	1
+ 146              		.global	_ZN6PinOut8setStateE5State
+ 147              		.syntax unified
+ 148              		.thumb
+ 149              		.thumb_func
+ 150              		.fpu softvfp
+ 152              	_ZN6PinOut8setStateE5State:
+ 153              		.fnstart
+ 154              	.LVL5:
+ 155              	.LFB77:
+  19:Core/Src/PinOut.cpp **** 
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s 			page 4
+
+
+  20:Core/Src/PinOut.cpp **** void PinOut::turnOn()
+  21:Core/Src/PinOut.cpp **** {
+  22:Core/Src/PinOut.cpp ****     setState(State::On);
+  23:Core/Src/PinOut.cpp **** }
+  24:Core/Src/PinOut.cpp **** 
+  25:Core/Src/PinOut.cpp **** void PinOut::turnOff()
+  26:Core/Src/PinOut.cpp **** {
+  27:Core/Src/PinOut.cpp ****     setState(State::Off);
+  28:Core/Src/PinOut.cpp **** }
+  29:Core/Src/PinOut.cpp **** 
+  30:Core/Src/PinOut.cpp **** void PinOut::setState(State state)
+  31:Core/Src/PinOut.cpp **** {
+ 156              		.loc 1 31 1 is_stmt 1 view -0
+ 157              		.cfi_startproc
+ 158              		@ args = 0, pretend = 0, frame = 0
+ 159              		@ frame_needed = 0, uses_anonymous_args = 0
+ 160              		.loc 1 31 1 is_stmt 0 view .LVU37
+ 161 0000 08B5     		push	{r3, lr}
+ 162              		.save {r3, lr}
+ 163              	.LCFI3:
+ 164              		.cfi_def_cfa_offset 8
+ 165              		.cfi_offset 3, -8
+ 166              		.cfi_offset 14, -4
+  32:Core/Src/PinOut.cpp ****     if (state == State::On)
+ 167              		.loc 1 32 5 is_stmt 1 view .LVU38
+ 168 0002 0129     		cmp	r1, #1
+ 169 0004 01D0     		beq	.L9
+  33:Core/Src/PinOut.cpp ****     {
+  34:Core/Src/PinOut.cpp ****         HAL_GPIO_WritePin(this->GPIOx, this->GPIO_Pin, GPIO_PIN_SET);
+  35:Core/Src/PinOut.cpp ****     }
+  36:Core/Src/PinOut.cpp ****     else if (state == State::Off)
+ 170              		.loc 1 36 10 view .LVU39
+ 171 0006 31B1     		cbz	r1, .L10
+ 172              	.LVL6:
+ 173              	.L5:
+  37:Core/Src/PinOut.cpp ****     {
+  38:Core/Src/PinOut.cpp ****         HAL_GPIO_WritePin(this->GPIOx, this->GPIO_Pin, GPIO_PIN_RESET);
+  39:Core/Src/PinOut.cpp ****     }
+  40:Core/Src/PinOut.cpp **** }
+ 174              		.loc 1 40 1 is_stmt 0 view .LVU40
+ 175 0008 08BD     		pop	{r3, pc}
+ 176              	.LVL7:
+ 177              	.L9:
+  34:Core/Src/PinOut.cpp ****     }
+ 178              		.loc 1 34 9 is_stmt 1 view .LVU41
+  34:Core/Src/PinOut.cpp ****     }
+ 179              		.loc 1 34 26 is_stmt 0 view .LVU42
+ 180 000a 0122     		movs	r2, #1
+ 181 000c 8188     		ldrh	r1, [r0, #4]
+ 182              	.LVL8:
+  34:Core/Src/PinOut.cpp ****     }
+ 183              		.loc 1 34 26 view .LVU43
+ 184 000e 0068     		ldr	r0, [r0]
+ 185              	.LVL9:
+  34:Core/Src/PinOut.cpp ****     }
+ 186              		.loc 1 34 26 view .LVU44
+ 187 0010 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s 			page 5
+
+
+ 188              	.LVL10:
+ 189 0014 F8E7     		b	.L5
+ 190              	.LVL11:
+ 191              	.L10:
+  38:Core/Src/PinOut.cpp ****     }
+ 192              		.loc 1 38 9 is_stmt 1 view .LVU45
+  38:Core/Src/PinOut.cpp ****     }
+ 193              		.loc 1 38 26 is_stmt 0 view .LVU46
+ 194 0016 0022     		movs	r2, #0
+ 195 0018 8188     		ldrh	r1, [r0, #4]
+ 196              	.LVL12:
+  38:Core/Src/PinOut.cpp ****     }
+ 197              		.loc 1 38 26 view .LVU47
+ 198 001a 0068     		ldr	r0, [r0]
+ 199              	.LVL13:
+  38:Core/Src/PinOut.cpp ****     }
+ 200              		.loc 1 38 26 view .LVU48
+ 201 001c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 202              	.LVL14:
+ 203              		.loc 1 40 1 view .LVU49
+ 204 0020 F2E7     		b	.L5
+ 205              		.cfi_endproc
+ 206              	.LFE77:
+ 207              		.fnend
+ 209              		.section	.text._ZN6PinOut6turnOnEv,"ax",%progbits
+ 210              		.align	1
+ 211              		.global	_ZN6PinOut6turnOnEv
+ 212              		.syntax unified
+ 213              		.thumb
+ 214              		.thumb_func
+ 215              		.fpu softvfp
+ 217              	_ZN6PinOut6turnOnEv:
+ 218              		.fnstart
+ 219              	.LVL15:
+ 220              	.LFB75:
+  21:Core/Src/PinOut.cpp ****     setState(State::On);
+ 221              		.loc 1 21 1 is_stmt 1 view -0
+ 222              		.cfi_startproc
+ 223              		@ args = 0, pretend = 0, frame = 0
+ 224              		@ frame_needed = 0, uses_anonymous_args = 0
+  21:Core/Src/PinOut.cpp ****     setState(State::On);
+ 225              		.loc 1 21 1 is_stmt 0 view .LVU51
+ 226 0000 08B5     		push	{r3, lr}
+ 227              		.save {r3, lr}
+ 228              	.LCFI4:
+ 229              		.cfi_def_cfa_offset 8
+ 230              		.cfi_offset 3, -8
+ 231              		.cfi_offset 14, -4
+  22:Core/Src/PinOut.cpp **** }
+ 232              		.loc 1 22 5 is_stmt 1 view .LVU52
+  22:Core/Src/PinOut.cpp **** }
+ 233              		.loc 1 22 13 is_stmt 0 view .LVU53
+ 234 0002 0121     		movs	r1, #1
+ 235 0004 FFF7FEFF 		bl	_ZN6PinOut8setStateE5State
+ 236              	.LVL16:
+  23:Core/Src/PinOut.cpp **** 
+ 237              		.loc 1 23 1 view .LVU54
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s 			page 6
+
+
+ 238 0008 08BD     		pop	{r3, pc}
+ 239              		.cfi_endproc
+ 240              	.LFE75:
+ 241              		.fnend
+ 243              		.section	.text._ZN6PinOut7turnOffEv,"ax",%progbits
+ 244              		.align	1
+ 245              		.global	_ZN6PinOut7turnOffEv
+ 246              		.syntax unified
+ 247              		.thumb
+ 248              		.thumb_func
+ 249              		.fpu softvfp
+ 251              	_ZN6PinOut7turnOffEv:
+ 252              		.fnstart
+ 253              	.LVL17:
+ 254              	.LFB76:
+  26:Core/Src/PinOut.cpp ****     setState(State::Off);
+ 255              		.loc 1 26 1 is_stmt 1 view -0
+ 256              		.cfi_startproc
+ 257              		@ args = 0, pretend = 0, frame = 0
+ 258              		@ frame_needed = 0, uses_anonymous_args = 0
+  26:Core/Src/PinOut.cpp ****     setState(State::Off);
+ 259              		.loc 1 26 1 is_stmt 0 view .LVU56
+ 260 0000 08B5     		push	{r3, lr}
+ 261              		.save {r3, lr}
+ 262              	.LCFI5:
+ 263              		.cfi_def_cfa_offset 8
+ 264              		.cfi_offset 3, -8
+ 265              		.cfi_offset 14, -4
+  27:Core/Src/PinOut.cpp **** }
+ 266              		.loc 1 27 5 is_stmt 1 view .LVU57
+  27:Core/Src/PinOut.cpp **** }
+ 267              		.loc 1 27 13 is_stmt 0 view .LVU58
+ 268 0002 0021     		movs	r1, #0
+ 269 0004 FFF7FEFF 		bl	_ZN6PinOut8setStateE5State
+ 270              	.LVL18:
+  28:Core/Src/PinOut.cpp **** 
+ 271              		.loc 1 28 1 view .LVU59
+ 272 0008 08BD     		pop	{r3, pc}
+ 273              		.cfi_endproc
+ 274              	.LFE76:
+ 275              		.fnend
+ 277              		.section	.text._ZN6PinOut8getStateEv,"ax",%progbits
+ 278              		.align	1
+ 279              		.global	_ZN6PinOut8getStateEv
+ 280              		.syntax unified
+ 281              		.thumb
+ 282              		.thumb_func
+ 283              		.fpu softvfp
+ 285              	_ZN6PinOut8getStateEv:
+ 286              		.fnstart
+ 287              	.LVL19:
+ 288              	.LFB78:
+  41:Core/Src/PinOut.cpp **** 
+  42:Core/Src/PinOut.cpp **** State PinOut::getState()
+  43:Core/Src/PinOut.cpp **** {
+ 289              		.loc 1 43 1 is_stmt 1 view -0
+ 290              		.cfi_startproc
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s 			page 7
+
+
+ 291              		@ args = 0, pretend = 0, frame = 0
+ 292              		@ frame_needed = 0, uses_anonymous_args = 0
+ 293              		.loc 1 43 1 is_stmt 0 view .LVU61
+ 294 0000 08B5     		push	{r3, lr}
+ 295              		.save {r3, lr}
+ 296              	.LCFI6:
+ 297              		.cfi_def_cfa_offset 8
+ 298              		.cfi_offset 3, -8
+ 299              		.cfi_offset 14, -4
+  44:Core/Src/PinOut.cpp ****     if (HAL_GPIO_ReadPin(this->GPIOx, this->GPIO_Pin) == GPIO_PIN_RESET)
+ 300              		.loc 1 44 5 is_stmt 1 view .LVU62
+ 301              		.loc 1 44 25 is_stmt 0 view .LVU63
+ 302 0002 8188     		ldrh	r1, [r0, #4]
+ 303 0004 0068     		ldr	r0, [r0]
+ 304              	.LVL20:
+ 305              		.loc 1 44 25 view .LVU64
+ 306 0006 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 307              	.LVL21:
+ 308              		.loc 1 44 5 view .LVU65
+ 309 000a 08B1     		cbz	r0, .L17
+  45:Core/Src/PinOut.cpp ****     {
+  46:Core/Src/PinOut.cpp ****         return State::Off;
+  47:Core/Src/PinOut.cpp ****     }
+  48:Core/Src/PinOut.cpp **** 
+  49:Core/Src/PinOut.cpp ****     return State::On;
+ 310              		.loc 1 49 19 view .LVU66
+ 311 000c 0120     		movs	r0, #1
+ 312              	.L15:
+  50:Core/Src/PinOut.cpp **** }
+ 313              		.loc 1 50 1 view .LVU67
+ 314 000e 08BD     		pop	{r3, pc}
+ 315              	.L17:
+  46:Core/Src/PinOut.cpp ****     }
+ 316              		.loc 1 46 23 view .LVU68
+ 317 0010 0020     		movs	r0, #0
+ 318 0012 FCE7     		b	.L15
+ 319              		.cfi_endproc
+ 320              	.LFE78:
+ 321              		.fnend
+ 323              		.text
+ 324              	.Letext0:
+ 325              		.file 2 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\machine\\_def
+ 326              		.file 3 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\sys\\_stdint.
+ 327              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xg.h"
+ 328              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 329              		.file 6 "Core/Inc/PinOut.h"
+ 330              		.file 7 "Core/Inc/State.h"
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 PinOut.cpp
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:16     .text._ZN6PinOutC2EP12GPIO_TypeDeft:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:24     .text._ZN6PinOutC2EP12GPIO_TypeDeft:00000000 _ZN6PinOutC2EP12GPIO_TypeDeft
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:137    .text._ZN6PinOutC2EP12GPIO_TypeDeft:00000064 $d
+.ARM.exidx.text._ZN6PinOutC2EP12GPIO_TypeDeft:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:24     .text._ZN6PinOutC2EP12GPIO_TypeDeft:00000000 _ZN6PinOutC1EP12GPIO_TypeDeft
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:145    .text._ZN6PinOut8setStateE5State:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:152    .text._ZN6PinOut8setStateE5State:00000000 _ZN6PinOut8setStateE5State
+.ARM.extab.text._ZN6PinOut8setStateE5State:00000000 $d
+.ARM.exidx.text._ZN6PinOut8setStateE5State:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:210    .text._ZN6PinOut6turnOnEv:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:217    .text._ZN6PinOut6turnOnEv:00000000 _ZN6PinOut6turnOnEv
+.ARM.extab.text._ZN6PinOut6turnOnEv:00000000 $d
+.ARM.exidx.text._ZN6PinOut6turnOnEv:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:244    .text._ZN6PinOut7turnOffEv:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:251    .text._ZN6PinOut7turnOffEv:00000000 _ZN6PinOut7turnOffEv
+.ARM.extab.text._ZN6PinOut7turnOffEv:00000000 $d
+.ARM.exidx.text._ZN6PinOut7turnOffEv:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:278    .text._ZN6PinOut8getStateEv:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\cc0XkaQ1.s:285    .text._ZN6PinOut8getStateEv:00000000 _ZN6PinOut8getStateEv
+.ARM.extab.text._ZN6PinOut8getStateEv:00000000 $d
+.ARM.exidx.text._ZN6PinOut8getStateEv:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_Init
+__aeabi_unwind_cpp_pr0
+HAL_GPIO_WritePin
+__aeabi_unwind_cpp_pr1
+HAL_GPIO_ReadPin
