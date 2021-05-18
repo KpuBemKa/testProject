@@ -6,8 +6,5 @@
 class ConstantRelay : PinOut
 {
 public:
-    ConstantRelay(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
-        : PinOut(GPIOx, GPIO_Pin)
-    {
-    }
+    ConstantRelay(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 };

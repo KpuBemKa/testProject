@@ -6,8 +6,5 @@
 class ImpulseRelay : PinOut
 {
 public:
-    ImpulseRelay(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
-        : PinOut(GPIOx, GPIO_Pin)
-    {
-    }
+    ImpulseRelay(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 };

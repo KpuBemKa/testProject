@@ -8,35 +8,15 @@ class Timer
     uint32_t lastTick;
 
 public:
-    Timer()
-    {
-        start();
-        setLastTick();
-    }
+    Timer();
 
-    Timer(uint32_t startTime, uint32_t lastTick)
-    {
-        this->startTime = startTime;
-        this->lastTick = lastTick;
-    }
+    Timer(uint32_t startTime, uint32_t lastTick);
 
-    void start()
-    {
-        this->startTime = HAL_GetTick();
-    }
+    void start();
 
-    uint32_t getStartTime()
-    {
-        return this->startTime;
-    }
+    uint32_t getStartTime();
 
-    void setLastTick()
-    {
-        this->lastTick = HAL_GetTick();
-    }
+    void setLastTick();
 
-    uint32_t getLastTick()
-    {
-        return this->lastTick;
-    }
+    uint32_t getLastTick();
 };

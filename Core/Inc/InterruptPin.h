@@ -9,23 +9,9 @@ private:
     bool stateChanged;
 
 public:
-    InterruptPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) : PinIn(GPIOx, GPIO_Pin)
-    {
-    }
+    InterruptPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 
-    bool isStateChanged()
-    {
-        if (this->stateChanged == true)
-        {
-            this->stateChanged = false;
-            return true;
-        }
+    bool isStateChanged();
 
-        return false;
-    }
-
-    void setStateChanged()
-    {
-        this->stateChanged = true;
-    }
+    void setStateChanged();
 };
