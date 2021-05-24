@@ -1,0 +1,2145 @@
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"Intercom.cpp"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.rodata._ZN10ClosedMode13KeyReadHandleEv.str1.4,"aMS",%progbits,1
+  16              		.align	2
+  17              	.LC0:
+  18 0000 41636365 		.ascii	"Acces denied, door is closed. Key id: %d.\015\012\000"
+  18      73206465 
+  18      6E696564 
+  18      2C20646F 
+  18      6F722069 
+  19              		.section	.text._ZN10ClosedMode13KeyReadHandleEv,"ax",%progbits
+  20              		.align	1
+  21              		.global	_ZN10ClosedMode13KeyReadHandleEv
+  22              		.arch armv7-m
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  26              		.fpu softvfp
+  28              	_ZN10ClosedMode13KeyReadHandleEv:
+  29              		.fnstart
+  30              	.LVL0:
+  31              	.LFB101:
+  32              		.file 1 "Core/Src/Intercom.cpp"
+   1:Core/Src/Intercom.cpp **** #include "Intercom.h"
+   2:Core/Src/Intercom.cpp **** 
+   3:Core/Src/Intercom.cpp **** bool
+   4:Core/Src/Intercom.cpp ****     localInsideKeyRead = false,
+   5:Core/Src/Intercom.cpp ****     localOutsideKeyRead = false;
+   6:Core/Src/Intercom.cpp **** 
+   7:Core/Src/Intercom.cpp **** bool verifyCode(uint32_t code);
+   8:Core/Src/Intercom.cpp **** 
+   9:Core/Src/Intercom.cpp **** Mode::~Mode()
+  10:Core/Src/Intercom.cpp **** {
+  11:Core/Src/Intercom.cpp **** }
+  12:Core/Src/Intercom.cpp **** 
+  13:Core/Src/Intercom.cpp **** void Mode::setMode(Context *context)
+  14:Core/Src/Intercom.cpp **** {
+  15:Core/Src/Intercom.cpp ****     this->context = context;
+  16:Core/Src/Intercom.cpp **** }
+  17:Core/Src/Intercom.cpp **** 
+  18:Core/Src/Intercom.cpp **** Context::Context(IntercomMode intercomMode) : mode()
+  19:Core/Src/Intercom.cpp **** {
+  20:Core/Src/Intercom.cpp ****     switch (intercomMode)
+  21:Core/Src/Intercom.cpp ****     {
+  22:Core/Src/Intercom.cpp ****     case IntercomMode::NormalMode:
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 2
+
+
+  23:Core/Src/Intercom.cpp ****     {
+  24:Core/Src/Intercom.cpp ****         this->TransitionTo(new NormalMode);
+  25:Core/Src/Intercom.cpp ****         break;
+  26:Core/Src/Intercom.cpp ****     }
+  27:Core/Src/Intercom.cpp ****     case IntercomMode::ClosedMode:
+  28:Core/Src/Intercom.cpp ****     {
+  29:Core/Src/Intercom.cpp ****         this->TransitionTo(new ClosedMode);
+  30:Core/Src/Intercom.cpp ****         break;
+  31:Core/Src/Intercom.cpp ****     }
+  32:Core/Src/Intercom.cpp ****     case IntercomMode::OpenMode:
+  33:Core/Src/Intercom.cpp ****     {
+  34:Core/Src/Intercom.cpp ****         this->TransitionTo(new OpenMode);
+  35:Core/Src/Intercom.cpp ****         break;
+  36:Core/Src/Intercom.cpp ****     }
+  37:Core/Src/Intercom.cpp ****     case IntercomMode::CondOpenMode:
+  38:Core/Src/Intercom.cpp ****     {
+  39:Core/Src/Intercom.cpp ****         this->TransitionTo(new CondOpenMode);
+  40:Core/Src/Intercom.cpp ****         break;
+  41:Core/Src/Intercom.cpp ****     }
+  42:Core/Src/Intercom.cpp **** 
+  43:Core/Src/Intercom.cpp ****     default:
+  44:Core/Src/Intercom.cpp ****         this->TransitionTo(nullptr);
+  45:Core/Src/Intercom.cpp ****         break;
+  46:Core/Src/Intercom.cpp ****     }
+  47:Core/Src/Intercom.cpp **** }
+  48:Core/Src/Intercom.cpp **** 
+  49:Core/Src/Intercom.cpp **** Context::~Context()
+  50:Core/Src/Intercom.cpp **** {
+  51:Core/Src/Intercom.cpp ****     delete this->mode;
+  52:Core/Src/Intercom.cpp **** }
+  53:Core/Src/Intercom.cpp **** 
+  54:Core/Src/Intercom.cpp **** void Context::TransitionTo(Mode *mode)
+  55:Core/Src/Intercom.cpp **** {
+  56:Core/Src/Intercom.cpp ****     if (this->mode == nullptr)
+  57:Core/Src/Intercom.cpp ****     {
+  58:Core/Src/Intercom.cpp ****         delete this->mode;
+  59:Core/Src/Intercom.cpp ****     }
+  60:Core/Src/Intercom.cpp **** 
+  61:Core/Src/Intercom.cpp ****     this->mode = mode;
+  62:Core/Src/Intercom.cpp ****     this->mode->setMode(this);
+  63:Core/Src/Intercom.cpp **** }
+  64:Core/Src/Intercom.cpp **** 
+  65:Core/Src/Intercom.cpp **** void Context::KeyReadEvent()
+  66:Core/Src/Intercom.cpp **** {
+  67:Core/Src/Intercom.cpp ****     this->mode->KeyReadHandle();
+  68:Core/Src/Intercom.cpp **** }
+  69:Core/Src/Intercom.cpp **** 
+  70:Core/Src/Intercom.cpp **** void NormalMode::KeyReadHandle()
+  71:Core/Src/Intercom.cpp **** {
+  72:Core/Src/Intercom.cpp ****     if (wig_available() && verifyCode(getCode()))
+  73:Core/Src/Intercom.cpp ****     {
+  74:Core/Src/Intercom.cpp ****         UART_Printf("test2\r\n");
+  75:Core/Src/Intercom.cpp ****         UART_Printf("%s intercom was used. Key id: %d.\r\n", localInsideKeyRead ? "Inside" : "Outsi
+  76:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+  77:Core/Src/Intercom.cpp ****     }
+  78:Core/Src/Intercom.cpp **** }
+  79:Core/Src/Intercom.cpp **** 
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 3
+
+
+  80:Core/Src/Intercom.cpp **** void ClosedMode::KeyReadHandle()
+  81:Core/Src/Intercom.cpp **** {
+  33              		.loc 1 81 1 view -0
+  34              		.cfi_startproc
+  35              		@ args = 0, pretend = 0, frame = 0
+  36              		@ frame_needed = 0, uses_anonymous_args = 0
+  37              		.loc 1 81 1 is_stmt 0 view .LVU1
+  38 0000 08B5     		push	{r3, lr}
+  39              		.save {r3, lr}
+  40              	.LCFI0:
+  41              		.cfi_def_cfa_offset 8
+  42              		.cfi_offset 3, -8
+  43              		.cfi_offset 14, -4
+  82:Core/Src/Intercom.cpp ****     if (wig_available())
+  44              		.loc 1 82 5 is_stmt 1 view .LVU2
+  45              		.loc 1 82 22 is_stmt 0 view .LVU3
+  46 0002 FFF7FEFF 		bl	wig_available
+  47              	.LVL1:
+  48              		.loc 1 82 5 view .LVU4
+  49 0006 00B9     		cbnz	r0, .L4
+  50              	.L1:
+  83:Core/Src/Intercom.cpp ****     {
+  84:Core/Src/Intercom.cpp ****         UART_Printf("Acces denied, door is closed. Key id: %d.\r\n", getCode());
+  85:Core/Src/Intercom.cpp **** 
+  86:Core/Src/Intercom.cpp ****         previousWorkMode = workMode;
+  87:Core/Src/Intercom.cpp ****         workMode = WorkMode::DenyMode;
+  88:Core/Src/Intercom.cpp ****     }
+  89:Core/Src/Intercom.cpp **** }
+  51              		.loc 1 89 1 view .LVU5
+  52 0008 08BD     		pop	{r3, pc}
+  53              	.L4:
+  84:Core/Src/Intercom.cpp **** 
+  54              		.loc 1 84 9 is_stmt 1 view .LVU6
+  84:Core/Src/Intercom.cpp **** 
+  55              		.loc 1 84 20 is_stmt 0 view .LVU7
+  56 000a FFF7FEFF 		bl	getCode
+  57              	.LVL2:
+  58 000e 0146     		mov	r1, r0
+  59 0010 0448     		ldr	r0, .L5
+  60 0012 FFF7FEFF 		bl	_Z11UART_PrintfPKcz
+  61              	.LVL3:
+  86:Core/Src/Intercom.cpp ****         workMode = WorkMode::DenyMode;
+  62              		.loc 1 86 9 is_stmt 1 view .LVU8
+  86:Core/Src/Intercom.cpp ****         workMode = WorkMode::DenyMode;
+  63              		.loc 1 86 26 is_stmt 0 view .LVU9
+  64 0016 044B     		ldr	r3, .L5+4
+  65 0018 1968     		ldr	r1, [r3]
+  66 001a 044A     		ldr	r2, .L5+8
+  67 001c 1160     		str	r1, [r2]
+  87:Core/Src/Intercom.cpp ****     }
+  68              		.loc 1 87 9 is_stmt 1 view .LVU10
+  87:Core/Src/Intercom.cpp ****     }
+  69              		.loc 1 87 18 is_stmt 0 view .LVU11
+  70 001e 0122     		movs	r2, #1
+  71 0020 1A60     		str	r2, [r3]
+  72              		.loc 1 89 1 view .LVU12
+  73 0022 F1E7     		b	.L1
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 4
+
+
+  74              	.L6:
+  75              		.align	2
+  76              	.L5:
+  77 0024 00000000 		.word	.LC0
+  78 0028 00000000 		.word	workMode
+  79 002c 00000000 		.word	previousWorkMode
+  80              		.cfi_endproc
+  81              	.LFE101:
+  82              		.fnend
+  84              		.section	.rodata._ZN8OpenMode13KeyReadHandleEv.str1.4,"aMS",%progbits,1
+  85              		.align	2
+  86              	.LC1:
+  87 0000 4F757473 		.ascii	"Outside\000"
+  87      69646500 
+  88              		.align	2
+  89              	.LC2:
+  90 0008 496E7369 		.ascii	"Inside\000"
+  90      646500
+  91 000f 00       		.align	2
+  92              	.LC3:
+  93 0010 25732069 		.ascii	"%s intercom was used. Key id: %d.\015\012\000"
+  93      6E746572 
+  93      636F6D20 
+  93      77617320 
+  93      75736564 
+  94              		.section	.text._ZN8OpenMode13KeyReadHandleEv,"ax",%progbits
+  95              		.align	1
+  96              		.global	_ZN8OpenMode13KeyReadHandleEv
+  97              		.syntax unified
+  98              		.thumb
+  99              		.thumb_func
+ 100              		.fpu softvfp
+ 102              	_ZN8OpenMode13KeyReadHandleEv:
+ 103              		.fnstart
+ 104              	.LVL4:
+ 105              	.LFB102:
+  90:Core/Src/Intercom.cpp **** 
+  91:Core/Src/Intercom.cpp **** void OpenMode::KeyReadHandle()
+  92:Core/Src/Intercom.cpp **** {
+ 106              		.loc 1 92 1 is_stmt 1 view -0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 0
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110              		.loc 1 92 1 is_stmt 0 view .LVU14
+ 111 0000 10B5     		push	{r4, lr}
+ 112              		.save {r4, lr}
+ 113              	.LCFI1:
+ 114              		.cfi_def_cfa_offset 8
+ 115              		.cfi_offset 4, -8
+ 116              		.cfi_offset 14, -4
+  93:Core/Src/Intercom.cpp ****     if (wig_available())
+ 117              		.loc 1 93 5 is_stmt 1 view .LVU15
+ 118              		.loc 1 93 22 is_stmt 0 view .LVU16
+ 119 0002 FFF7FEFF 		bl	wig_available
+ 120              	.LVL5:
+ 121              		.loc 1 93 5 view .LVU17
+ 122 0006 68B1     		cbz	r0, .L7
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 5
+
+
+  94:Core/Src/Intercom.cpp ****     {
+  95:Core/Src/Intercom.cpp ****         UART_Printf("%s intercom was used. Key id: %d.\r\n", localInsideKeyRead ? "Inside" : "Outsi
+ 123              		.loc 1 95 9 is_stmt 1 view .LVU18
+ 124              		.loc 1 95 20 is_stmt 0 view .LVU19
+ 125 0008 084B     		ldr	r3, .L12
+ 126 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 127 000c 5BB1     		cbz	r3, .L10
+ 128 000e 084C     		ldr	r4, .L12+4
+ 129              	.L9:
+ 130              		.loc 1 95 20 discriminator 4 view .LVU20
+ 131 0010 FFF7FEFF 		bl	getCode
+ 132              	.LVL6:
+ 133 0014 0246     		mov	r2, r0
+ 134 0016 2146     		mov	r1, r4
+ 135 0018 0648     		ldr	r0, .L12+8
+ 136 001a FFF7FEFF 		bl	_Z11UART_PrintfPKcz
+ 137              	.LVL7:
+  96:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+ 138              		.loc 1 96 9 is_stmt 1 discriminator 4 view .LVU21
+ 139              		.loc 1 96 18 is_stmt 0 discriminator 4 view .LVU22
+ 140 001e 064B     		ldr	r3, .L12+12
+ 141 0020 0022     		movs	r2, #0
+ 142 0022 1A60     		str	r2, [r3]
+ 143              	.L7:
+  97:Core/Src/Intercom.cpp ****     }
+  98:Core/Src/Intercom.cpp **** }
+ 144              		.loc 1 98 1 view .LVU23
+ 145 0024 10BD     		pop	{r4, pc}
+ 146              	.L10:
+  95:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+ 147              		.loc 1 95 20 view .LVU24
+ 148 0026 054C     		ldr	r4, .L12+16
+ 149 0028 F2E7     		b	.L9
+ 150              	.L13:
+ 151 002a 00BF     		.align	2
+ 152              	.L12:
+ 153 002c 00000000 		.word	.LANCHOR0
+ 154 0030 08000000 		.word	.LC2
+ 155 0034 10000000 		.word	.LC3
+ 156 0038 00000000 		.word	workMode
+ 157 003c 00000000 		.word	.LC1
+ 158              		.cfi_endproc
+ 159              	.LFE102:
+ 160              		.fnend
+ 162              		.section	.text._ZN4ModeD2Ev,"ax",%progbits
+ 163              		.align	1
+ 164              		.global	_ZN4ModeD2Ev
+ 165              		.syntax unified
+ 166              		.thumb
+ 167              		.thumb_func
+ 168              		.fpu softvfp
+ 170              	_ZN4ModeD2Ev:
+ 171              		.fnstart
+ 172              	.LVL8:
+ 173              	.LFB73:
+   9:Core/Src/Intercom.cpp **** {
+ 174              		.loc 1 9 1 is_stmt 1 view -0
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 6
+
+
+ 175              		.cfi_startproc
+ 176              		@ args = 0, pretend = 0, frame = 0
+ 177              		@ frame_needed = 0, uses_anonymous_args = 0
+ 178              		@ link register save eliminated.
+ 179              	.LBB56:
+   9:Core/Src/Intercom.cpp **** {
+ 180              		.loc 1 9 13 is_stmt 0 view .LVU26
+ 181 0000 014B     		ldr	r3, .L15
+ 182 0002 0360     		str	r3, [r0]
+ 183              	.LBE56:
+  11:Core/Src/Intercom.cpp **** 
+ 184              		.loc 1 11 1 view .LVU27
+ 185 0004 7047     		bx	lr
+ 186              	.L16:
+ 187 0006 00BF     		.align	2
+ 188              	.L15:
+ 189 0008 08000000 		.word	.LANCHOR1+8
+ 190              		.cfi_endproc
+ 191              	.LFE73:
+ 192              		.cantunwind
+ 193              		.fnend
+ 195              		.global	_ZN4ModeD1Ev
+ 196              		.thumb_set _ZN4ModeD1Ev,_ZN4ModeD2Ev
+ 197              		.section	.text._ZN12CondOpenModeD2Ev,"axG",%progbits,_ZN12CondOpenModeD5Ev,comdat
+ 198              		.align	1
+ 199              		.weak	_ZN12CondOpenModeD2Ev
+ 200              		.syntax unified
+ 201              		.thumb
+ 202              		.thumb_func
+ 203              		.fpu softvfp
+ 205              	_ZN12CondOpenModeD2Ev:
+ 206              		.fnstart
+ 207              	.LVL9:
+ 208              	.LFB107:
+ 209              		.file 2 "Core/Inc/Intercom.h"
+   1:Core/Inc/Intercom.h **** #pragma once
+   2:Core/Inc/Intercom.h **** #include "wiegand.h"
+   3:Core/Inc/Intercom.h **** #include "UART_Print.h"
+   4:Core/Inc/Intercom.h **** #include "Flags.h"
+   5:Core/Inc/Intercom.h **** #include "IntercomMode.h"
+   6:Core/Inc/Intercom.h **** 
+   7:Core/Inc/Intercom.h **** class Context;
+   8:Core/Inc/Intercom.h **** 
+   9:Core/Inc/Intercom.h **** class Mode
+  10:Core/Inc/Intercom.h **** {
+  11:Core/Inc/Intercom.h **** protected:
+  12:Core/Inc/Intercom.h ****     Context *context;
+  13:Core/Inc/Intercom.h **** 
+  14:Core/Inc/Intercom.h **** public:
+  15:Core/Inc/Intercom.h ****     virtual ~Mode();
+  16:Core/Inc/Intercom.h **** 
+  17:Core/Inc/Intercom.h ****     void setMode(Context *context);
+  18:Core/Inc/Intercom.h **** 
+  19:Core/Inc/Intercom.h ****     virtual void KeyReadHandle() = 0;
+  20:Core/Inc/Intercom.h **** };
+  21:Core/Inc/Intercom.h **** 
+  22:Core/Inc/Intercom.h **** class Context
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 7
+
+
+  23:Core/Inc/Intercom.h **** {
+  24:Core/Inc/Intercom.h **** private:
+  25:Core/Inc/Intercom.h ****     Mode *mode;
+  26:Core/Inc/Intercom.h **** 
+  27:Core/Inc/Intercom.h **** public:
+  28:Core/Inc/Intercom.h ****     Context(IntercomMode intercomMode);
+  29:Core/Inc/Intercom.h **** 
+  30:Core/Inc/Intercom.h ****     ~Context();
+  31:Core/Inc/Intercom.h **** 
+  32:Core/Inc/Intercom.h ****     void TransitionTo(Mode *mode);
+  33:Core/Inc/Intercom.h **** 
+  34:Core/Inc/Intercom.h ****     void KeyReadEvent();
+  35:Core/Inc/Intercom.h **** };
+  36:Core/Inc/Intercom.h **** 
+  37:Core/Inc/Intercom.h **** class NormalMode : public Mode
+  38:Core/Inc/Intercom.h **** {
+  39:Core/Inc/Intercom.h **** public:
+  40:Core/Inc/Intercom.h ****     virtual void KeyReadHandle();
+  41:Core/Inc/Intercom.h **** };
+  42:Core/Inc/Intercom.h **** 
+  43:Core/Inc/Intercom.h **** class ClosedMode : public Mode
+  44:Core/Inc/Intercom.h **** {
+  45:Core/Inc/Intercom.h ****     virtual void KeyReadHandle();
+  46:Core/Inc/Intercom.h **** };
+  47:Core/Inc/Intercom.h **** 
+  48:Core/Inc/Intercom.h **** class OpenMode : public Mode
+  49:Core/Inc/Intercom.h **** {
+  50:Core/Inc/Intercom.h ****     virtual void KeyReadHandle();
+  51:Core/Inc/Intercom.h **** };
+  52:Core/Inc/Intercom.h **** 
+  53:Core/Inc/Intercom.h **** class CondOpenMode : public Mode
+ 210              		.loc 2 53 7 is_stmt 1 view -0
+ 211              		.cfi_startproc
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214              		.loc 2 53 7 is_stmt 0 view .LVU29
+ 215 0000 10B5     		push	{r4, lr}
+ 216              	.LCFI2:
+ 217              		.cfi_def_cfa_offset 8
+ 218              		.cfi_offset 4, -8
+ 219              		.cfi_offset 14, -4
+ 220 0002 0446     		mov	r4, r0
+ 221              	.LBB57:
+ 222              		.loc 2 53 7 view .LVU30
+ 223 0004 024B     		ldr	r3, .L19
+ 224 0006 0360     		str	r3, [r0]
+ 225 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 226              	.LVL10:
+ 227              		.loc 2 53 7 view .LVU31
+ 228              	.LBE57:
+ 229 000c 2046     		mov	r0, r4
+ 230 000e 10BD     		pop	{r4, pc}
+ 231              	.LVL11:
+ 232              	.L20:
+ 233              		.loc 2 53 7 view .LVU32
+ 234              		.align	2
+ 235              	.L19:
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 8
+
+
+ 236 0010 08000000 		.word	.LANCHOR2+8
+ 237              		.cfi_endproc
+ 238              	.LFE107:
+ 239              		.cantunwind
+ 240              		.fnend
+ 242              		.weak	_ZN12CondOpenModeD1Ev
+ 243              		.thumb_set _ZN12CondOpenModeD1Ev,_ZN12CondOpenModeD2Ev
+ 244              		.section	.text._ZN12CondOpenModeD0Ev,"axG",%progbits,_ZN12CondOpenModeD5Ev,comdat
+ 245              		.align	1
+ 246              		.weak	_ZN12CondOpenModeD0Ev
+ 247              		.syntax unified
+ 248              		.thumb
+ 249              		.thumb_func
+ 250              		.fpu softvfp
+ 252              	_ZN12CondOpenModeD0Ev:
+ 253              		.fnstart
+ 254              	.LVL12:
+ 255              	.LFB109:
+ 256              		.loc 2 53 7 is_stmt 1 view -0
+ 257              		.cfi_startproc
+ 258              		@ args = 0, pretend = 0, frame = 0
+ 259              		@ frame_needed = 0, uses_anonymous_args = 0
+ 260              		.loc 2 53 7 is_stmt 0 view .LVU34
+ 261 0000 10B5     		push	{r4, lr}
+ 262              	.LCFI3:
+ 263              		.cfi_def_cfa_offset 8
+ 264              		.cfi_offset 4, -8
+ 265              		.cfi_offset 14, -4
+ 266 0002 0446     		mov	r4, r0
+ 267              	.LVL13:
+ 268              	.LBB58:
+ 269              	.LBI58:
+ 270              		.loc 2 53 7 is_stmt 1 view .LVU35
+ 271              	.LBB59:
+ 272 0004 044B     		ldr	r3, .L23
+ 273 0006 0360     		str	r3, [r0]
+ 274 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 275              	.LVL14:
+ 276              		.loc 2 53 7 is_stmt 0 view .LVU36
+ 277              	.LBE59:
+ 278              	.LBE58:
+ 279 000c 0821     		movs	r1, #8
+ 280 000e 2046     		mov	r0, r4
+ 281 0010 FFF7FEFF 		bl	_ZdlPvj
+ 282              	.LVL15:
+ 283 0014 2046     		mov	r0, r4
+ 284 0016 10BD     		pop	{r4, pc}
+ 285              	.LVL16:
+ 286              	.L24:
+ 287              		.loc 2 53 7 view .LVU37
+ 288              		.align	2
+ 289              	.L23:
+ 290 0018 08000000 		.word	.LANCHOR2+8
+ 291              		.cfi_endproc
+ 292              	.LFE109:
+ 293              		.cantunwind
+ 294              		.fnend
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 9
+
+
+ 296              		.section	.text._ZN8OpenModeD2Ev,"axG",%progbits,_ZN8OpenModeD5Ev,comdat
+ 297              		.align	1
+ 298              		.weak	_ZN8OpenModeD2Ev
+ 299              		.syntax unified
+ 300              		.thumb
+ 301              		.thumb_func
+ 302              		.fpu softvfp
+ 304              	_ZN8OpenModeD2Ev:
+ 305              		.fnstart
+ 306              	.LVL17:
+ 307              	.LFB111:
+  48:Core/Inc/Intercom.h **** {
+ 308              		.loc 2 48 7 is_stmt 1 view -0
+ 309              		.cfi_startproc
+ 310              		@ args = 0, pretend = 0, frame = 0
+ 311              		@ frame_needed = 0, uses_anonymous_args = 0
+  48:Core/Inc/Intercom.h **** {
+ 312              		.loc 2 48 7 is_stmt 0 view .LVU39
+ 313 0000 10B5     		push	{r4, lr}
+ 314              	.LCFI4:
+ 315              		.cfi_def_cfa_offset 8
+ 316              		.cfi_offset 4, -8
+ 317              		.cfi_offset 14, -4
+ 318 0002 0446     		mov	r4, r0
+ 319              	.LBB60:
+  48:Core/Inc/Intercom.h **** {
+ 320              		.loc 2 48 7 view .LVU40
+ 321 0004 024B     		ldr	r3, .L27
+ 322 0006 0360     		str	r3, [r0]
+ 323 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 324              	.LVL18:
+  48:Core/Inc/Intercom.h **** {
+ 325              		.loc 2 48 7 view .LVU41
+ 326              	.LBE60:
+ 327 000c 2046     		mov	r0, r4
+ 328 000e 10BD     		pop	{r4, pc}
+ 329              	.LVL19:
+ 330              	.L28:
+  48:Core/Inc/Intercom.h **** {
+ 331              		.loc 2 48 7 view .LVU42
+ 332              		.align	2
+ 333              	.L27:
+ 334 0010 08000000 		.word	.LANCHOR3+8
+ 335              		.cfi_endproc
+ 336              	.LFE111:
+ 337              		.cantunwind
+ 338              		.fnend
+ 340              		.weak	_ZN8OpenModeD1Ev
+ 341              		.thumb_set _ZN8OpenModeD1Ev,_ZN8OpenModeD2Ev
+ 342              		.section	.text._ZN8OpenModeD0Ev,"axG",%progbits,_ZN8OpenModeD5Ev,comdat
+ 343              		.align	1
+ 344              		.weak	_ZN8OpenModeD0Ev
+ 345              		.syntax unified
+ 346              		.thumb
+ 347              		.thumb_func
+ 348              		.fpu softvfp
+ 350              	_ZN8OpenModeD0Ev:
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 10
+
+
+ 351              		.fnstart
+ 352              	.LVL20:
+ 353              	.LFB113:
+  48:Core/Inc/Intercom.h **** {
+ 354              		.loc 2 48 7 is_stmt 1 view -0
+ 355              		.cfi_startproc
+ 356              		@ args = 0, pretend = 0, frame = 0
+ 357              		@ frame_needed = 0, uses_anonymous_args = 0
+  48:Core/Inc/Intercom.h **** {
+ 358              		.loc 2 48 7 is_stmt 0 view .LVU44
+ 359 0000 10B5     		push	{r4, lr}
+ 360              	.LCFI5:
+ 361              		.cfi_def_cfa_offset 8
+ 362              		.cfi_offset 4, -8
+ 363              		.cfi_offset 14, -4
+ 364 0002 0446     		mov	r4, r0
+ 365              	.LVL21:
+ 366              	.LBB61:
+ 367              	.LBI61:
+  48:Core/Inc/Intercom.h **** {
+ 368              		.loc 2 48 7 is_stmt 1 view .LVU45
+ 369              	.LBB62:
+ 370 0004 044B     		ldr	r3, .L31
+ 371 0006 0360     		str	r3, [r0]
+ 372 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 373              	.LVL22:
+  48:Core/Inc/Intercom.h **** {
+ 374              		.loc 2 48 7 is_stmt 0 view .LVU46
+ 375              	.LBE62:
+ 376              	.LBE61:
+ 377 000c 0821     		movs	r1, #8
+ 378 000e 2046     		mov	r0, r4
+ 379 0010 FFF7FEFF 		bl	_ZdlPvj
+ 380              	.LVL23:
+ 381 0014 2046     		mov	r0, r4
+ 382 0016 10BD     		pop	{r4, pc}
+ 383              	.LVL24:
+ 384              	.L32:
+  48:Core/Inc/Intercom.h **** {
+ 385              		.loc 2 48 7 view .LVU47
+ 386              		.align	2
+ 387              	.L31:
+ 388 0018 08000000 		.word	.LANCHOR3+8
+ 389              		.cfi_endproc
+ 390              	.LFE113:
+ 391              		.cantunwind
+ 392              		.fnend
+ 394              		.section	.text._ZN10ClosedModeD2Ev,"axG",%progbits,_ZN10ClosedModeD5Ev,comdat
+ 395              		.align	1
+ 396              		.weak	_ZN10ClosedModeD2Ev
+ 397              		.syntax unified
+ 398              		.thumb
+ 399              		.thumb_func
+ 400              		.fpu softvfp
+ 402              	_ZN10ClosedModeD2Ev:
+ 403              		.fnstart
+ 404              	.LVL25:
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 11
+
+
+ 405              	.LFB115:
+  43:Core/Inc/Intercom.h **** {
+ 406              		.loc 2 43 7 is_stmt 1 view -0
+ 407              		.cfi_startproc
+ 408              		@ args = 0, pretend = 0, frame = 0
+ 409              		@ frame_needed = 0, uses_anonymous_args = 0
+  43:Core/Inc/Intercom.h **** {
+ 410              		.loc 2 43 7 is_stmt 0 view .LVU49
+ 411 0000 10B5     		push	{r4, lr}
+ 412              	.LCFI6:
+ 413              		.cfi_def_cfa_offset 8
+ 414              		.cfi_offset 4, -8
+ 415              		.cfi_offset 14, -4
+ 416 0002 0446     		mov	r4, r0
+ 417              	.LBB63:
+  43:Core/Inc/Intercom.h **** {
+ 418              		.loc 2 43 7 view .LVU50
+ 419 0004 024B     		ldr	r3, .L35
+ 420 0006 0360     		str	r3, [r0]
+ 421 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 422              	.LVL26:
+  43:Core/Inc/Intercom.h **** {
+ 423              		.loc 2 43 7 view .LVU51
+ 424              	.LBE63:
+ 425 000c 2046     		mov	r0, r4
+ 426 000e 10BD     		pop	{r4, pc}
+ 427              	.LVL27:
+ 428              	.L36:
+  43:Core/Inc/Intercom.h **** {
+ 429              		.loc 2 43 7 view .LVU52
+ 430              		.align	2
+ 431              	.L35:
+ 432 0010 08000000 		.word	.LANCHOR4+8
+ 433              		.cfi_endproc
+ 434              	.LFE115:
+ 435              		.cantunwind
+ 436              		.fnend
+ 438              		.weak	_ZN10ClosedModeD1Ev
+ 439              		.thumb_set _ZN10ClosedModeD1Ev,_ZN10ClosedModeD2Ev
+ 440              		.section	.text._ZN10ClosedModeD0Ev,"axG",%progbits,_ZN10ClosedModeD5Ev,comdat
+ 441              		.align	1
+ 442              		.weak	_ZN10ClosedModeD0Ev
+ 443              		.syntax unified
+ 444              		.thumb
+ 445              		.thumb_func
+ 446              		.fpu softvfp
+ 448              	_ZN10ClosedModeD0Ev:
+ 449              		.fnstart
+ 450              	.LVL28:
+ 451              	.LFB117:
+  43:Core/Inc/Intercom.h **** {
+ 452              		.loc 2 43 7 is_stmt 1 view -0
+ 453              		.cfi_startproc
+ 454              		@ args = 0, pretend = 0, frame = 0
+ 455              		@ frame_needed = 0, uses_anonymous_args = 0
+  43:Core/Inc/Intercom.h **** {
+ 456              		.loc 2 43 7 is_stmt 0 view .LVU54
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 12
+
+
+ 457 0000 10B5     		push	{r4, lr}
+ 458              	.LCFI7:
+ 459              		.cfi_def_cfa_offset 8
+ 460              		.cfi_offset 4, -8
+ 461              		.cfi_offset 14, -4
+ 462 0002 0446     		mov	r4, r0
+ 463              	.LVL29:
+ 464              	.LBB64:
+ 465              	.LBI64:
+  43:Core/Inc/Intercom.h **** {
+ 466              		.loc 2 43 7 is_stmt 1 view .LVU55
+ 467              	.LBB65:
+ 468 0004 044B     		ldr	r3, .L39
+ 469 0006 0360     		str	r3, [r0]
+ 470 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 471              	.LVL30:
+  43:Core/Inc/Intercom.h **** {
+ 472              		.loc 2 43 7 is_stmt 0 view .LVU56
+ 473              	.LBE65:
+ 474              	.LBE64:
+ 475 000c 0821     		movs	r1, #8
+ 476 000e 2046     		mov	r0, r4
+ 477 0010 FFF7FEFF 		bl	_ZdlPvj
+ 478              	.LVL31:
+ 479 0014 2046     		mov	r0, r4
+ 480 0016 10BD     		pop	{r4, pc}
+ 481              	.LVL32:
+ 482              	.L40:
+  43:Core/Inc/Intercom.h **** {
+ 483              		.loc 2 43 7 view .LVU57
+ 484              		.align	2
+ 485              	.L39:
+ 486 0018 08000000 		.word	.LANCHOR4+8
+ 487              		.cfi_endproc
+ 488              	.LFE117:
+ 489              		.cantunwind
+ 490              		.fnend
+ 492              		.section	.text._ZN10NormalModeD2Ev,"axG",%progbits,_ZN10NormalModeD5Ev,comdat
+ 493              		.align	1
+ 494              		.weak	_ZN10NormalModeD2Ev
+ 495              		.syntax unified
+ 496              		.thumb
+ 497              		.thumb_func
+ 498              		.fpu softvfp
+ 500              	_ZN10NormalModeD2Ev:
+ 501              		.fnstart
+ 502              	.LVL33:
+ 503              	.LFB119:
+  37:Core/Inc/Intercom.h **** {
+ 504              		.loc 2 37 7 is_stmt 1 view -0
+ 505              		.cfi_startproc
+ 506              		@ args = 0, pretend = 0, frame = 0
+ 507              		@ frame_needed = 0, uses_anonymous_args = 0
+  37:Core/Inc/Intercom.h **** {
+ 508              		.loc 2 37 7 is_stmt 0 view .LVU59
+ 509 0000 10B5     		push	{r4, lr}
+ 510              	.LCFI8:
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 13
+
+
+ 511              		.cfi_def_cfa_offset 8
+ 512              		.cfi_offset 4, -8
+ 513              		.cfi_offset 14, -4
+ 514 0002 0446     		mov	r4, r0
+ 515              	.LBB66:
+  37:Core/Inc/Intercom.h **** {
+ 516              		.loc 2 37 7 view .LVU60
+ 517 0004 024B     		ldr	r3, .L43
+ 518 0006 0360     		str	r3, [r0]
+ 519 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 520              	.LVL34:
+  37:Core/Inc/Intercom.h **** {
+ 521              		.loc 2 37 7 view .LVU61
+ 522              	.LBE66:
+ 523 000c 2046     		mov	r0, r4
+ 524 000e 10BD     		pop	{r4, pc}
+ 525              	.LVL35:
+ 526              	.L44:
+  37:Core/Inc/Intercom.h **** {
+ 527              		.loc 2 37 7 view .LVU62
+ 528              		.align	2
+ 529              	.L43:
+ 530 0010 08000000 		.word	.LANCHOR5+8
+ 531              		.cfi_endproc
+ 532              	.LFE119:
+ 533              		.cantunwind
+ 534              		.fnend
+ 536              		.weak	_ZN10NormalModeD1Ev
+ 537              		.thumb_set _ZN10NormalModeD1Ev,_ZN10NormalModeD2Ev
+ 538              		.section	.text._ZN10NormalModeD0Ev,"axG",%progbits,_ZN10NormalModeD5Ev,comdat
+ 539              		.align	1
+ 540              		.weak	_ZN10NormalModeD0Ev
+ 541              		.syntax unified
+ 542              		.thumb
+ 543              		.thumb_func
+ 544              		.fpu softvfp
+ 546              	_ZN10NormalModeD0Ev:
+ 547              		.fnstart
+ 548              	.LVL36:
+ 549              	.LFB121:
+  37:Core/Inc/Intercom.h **** {
+ 550              		.loc 2 37 7 is_stmt 1 view -0
+ 551              		.cfi_startproc
+ 552              		@ args = 0, pretend = 0, frame = 0
+ 553              		@ frame_needed = 0, uses_anonymous_args = 0
+  37:Core/Inc/Intercom.h **** {
+ 554              		.loc 2 37 7 is_stmt 0 view .LVU64
+ 555 0000 10B5     		push	{r4, lr}
+ 556              	.LCFI9:
+ 557              		.cfi_def_cfa_offset 8
+ 558              		.cfi_offset 4, -8
+ 559              		.cfi_offset 14, -4
+ 560 0002 0446     		mov	r4, r0
+ 561              	.LVL37:
+ 562              	.LBB67:
+ 563              	.LBI67:
+  37:Core/Inc/Intercom.h **** {
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 14
+
+
+ 564              		.loc 2 37 7 is_stmt 1 view .LVU65
+ 565              	.LBB68:
+ 566 0004 044B     		ldr	r3, .L47
+ 567 0006 0360     		str	r3, [r0]
+ 568 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 569              	.LVL38:
+  37:Core/Inc/Intercom.h **** {
+ 570              		.loc 2 37 7 is_stmt 0 view .LVU66
+ 571              	.LBE68:
+ 572              	.LBE67:
+ 573 000c 0821     		movs	r1, #8
+ 574 000e 2046     		mov	r0, r4
+ 575 0010 FFF7FEFF 		bl	_ZdlPvj
+ 576              	.LVL39:
+ 577 0014 2046     		mov	r0, r4
+ 578 0016 10BD     		pop	{r4, pc}
+ 579              	.LVL40:
+ 580              	.L48:
+  37:Core/Inc/Intercom.h **** {
+ 581              		.loc 2 37 7 view .LVU67
+ 582              		.align	2
+ 583              	.L47:
+ 584 0018 08000000 		.word	.LANCHOR5+8
+ 585              		.cfi_endproc
+ 586              	.LFE121:
+ 587              		.cantunwind
+ 588              		.fnend
+ 590              		.section	.text._ZN4ModeD0Ev,"ax",%progbits
+ 591              		.align	1
+ 592              		.global	_ZN4ModeD0Ev
+ 593              		.syntax unified
+ 594              		.thumb
+ 595              		.thumb_func
+ 596              		.fpu softvfp
+ 598              	_ZN4ModeD0Ev:
+ 599              		.fnstart
+ 600              	.LVL41:
+ 601              	.LFB75:
+   9:Core/Src/Intercom.cpp **** {
+ 602              		.loc 1 9 1 is_stmt 1 view -0
+ 603              		.cfi_startproc
+ 604              		@ args = 0, pretend = 0, frame = 0
+ 605              		@ frame_needed = 0, uses_anonymous_args = 0
+   9:Core/Src/Intercom.cpp **** {
+ 606              		.loc 1 9 1 is_stmt 0 view .LVU69
+ 607 0000 10B5     		push	{r4, lr}
+ 608              	.LCFI10:
+ 609              		.cfi_def_cfa_offset 8
+ 610              		.cfi_offset 4, -8
+ 611              		.cfi_offset 14, -4
+ 612 0002 0446     		mov	r4, r0
+  11:Core/Src/Intercom.cpp **** 
+ 613              		.loc 1 11 1 view .LVU70
+ 614 0004 FFF7FEFF 		bl	_ZN4ModeD1Ev
+ 615              	.LVL42:
+  11:Core/Src/Intercom.cpp **** 
+ 616              		.loc 1 11 1 view .LVU71
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 15
+
+
+ 617 0008 0821     		movs	r1, #8
+ 618 000a 2046     		mov	r0, r4
+ 619 000c FFF7FEFF 		bl	_ZdlPvj
+ 620              	.LVL43:
+ 621 0010 2046     		mov	r0, r4
+ 622 0012 10BD     		pop	{r4, pc}
+  11:Core/Src/Intercom.cpp **** 
+ 623              		.loc 1 11 1 view .LVU72
+ 624              		.cfi_endproc
+ 625              	.LFE75:
+ 626              		.cantunwind
+ 627              		.fnend
+ 629              		.section	.text._ZN4Mode7setModeEP7Context,"ax",%progbits
+ 630              		.align	1
+ 631              		.global	_ZN4Mode7setModeEP7Context
+ 632              		.syntax unified
+ 633              		.thumb
+ 634              		.thumb_func
+ 635              		.fpu softvfp
+ 637              	_ZN4Mode7setModeEP7Context:
+ 638              		.fnstart
+ 639              	.LVL44:
+ 640              	.LFB76:
+  14:Core/Src/Intercom.cpp ****     this->context = context;
+ 641              		.loc 1 14 1 is_stmt 1 view -0
+ 642              		.cfi_startproc
+ 643              		@ args = 0, pretend = 0, frame = 0
+ 644              		@ frame_needed = 0, uses_anonymous_args = 0
+ 645              		@ link register save eliminated.
+  15:Core/Src/Intercom.cpp **** }
+ 646              		.loc 1 15 5 view .LVU74
+  15:Core/Src/Intercom.cpp **** }
+ 647              		.loc 1 15 19 is_stmt 0 view .LVU75
+ 648 0000 4160     		str	r1, [r0, #4]
+  16:Core/Src/Intercom.cpp **** 
+ 649              		.loc 1 16 1 view .LVU76
+ 650 0002 7047     		bx	lr
+ 651              		.cfi_endproc
+ 652              	.LFE76:
+ 653              		.cantunwind
+ 654              		.fnend
+ 656              		.section	.text._ZN7ContextD2Ev,"ax",%progbits
+ 657              		.align	1
+ 658              		.global	_ZN7ContextD2Ev
+ 659              		.syntax unified
+ 660              		.thumb
+ 661              		.thumb_func
+ 662              		.fpu softvfp
+ 664              	_ZN7ContextD2Ev:
+ 665              		.fnstart
+ 666              	.LVL45:
+ 667              	.LFB96:
+  49:Core/Src/Intercom.cpp **** {
+ 668              		.loc 1 49 1 is_stmt 1 view -0
+ 669              		.cfi_startproc
+ 670              		@ args = 0, pretend = 0, frame = 0
+ 671              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 16
+
+
+  49:Core/Src/Intercom.cpp **** {
+ 672              		.loc 1 49 1 is_stmt 0 view .LVU78
+ 673 0000 10B5     		push	{r4, lr}
+ 674              	.LCFI11:
+ 675              		.cfi_def_cfa_offset 8
+ 676              		.cfi_offset 4, -8
+ 677              		.cfi_offset 14, -4
+ 678 0002 0446     		mov	r4, r0
+ 679              	.LBB69:
+  51:Core/Src/Intercom.cpp **** }
+ 680              		.loc 1 51 5 is_stmt 1 view .LVU79
+  51:Core/Src/Intercom.cpp **** }
+ 681              		.loc 1 51 18 is_stmt 0 view .LVU80
+ 682 0004 0068     		ldr	r0, [r0]
+ 683              	.LVL46:
+  51:Core/Src/Intercom.cpp **** }
+ 684              		.loc 1 51 5 view .LVU81
+ 685 0006 10B1     		cbz	r0, .L53
+  51:Core/Src/Intercom.cpp **** }
+ 686              		.loc 1 51 18 discriminator 1 view .LVU82
+ 687 0008 0368     		ldr	r3, [r0]
+ 688 000a 5B68     		ldr	r3, [r3, #4]
+ 689 000c 9847     		blx	r3
+ 690              	.LVL47:
+ 691              	.L53:
+ 692              	.LBE69:
+  52:Core/Src/Intercom.cpp **** 
+ 693              		.loc 1 52 1 view .LVU83
+ 694 000e 2046     		mov	r0, r4
+ 695 0010 10BD     		pop	{r4, pc}
+  52:Core/Src/Intercom.cpp **** 
+ 696              		.loc 1 52 1 view .LVU84
+ 697              		.cfi_endproc
+ 698              	.LFE96:
+ 699              		.cantunwind
+ 700              		.fnend
+ 702              		.global	_ZN7ContextD1Ev
+ 703              		.thumb_set _ZN7ContextD1Ev,_ZN7ContextD2Ev
+ 704              		.section	.text._ZN7Context12TransitionToEP4Mode,"ax",%progbits
+ 705              		.align	1
+ 706              		.global	_ZN7Context12TransitionToEP4Mode
+ 707              		.syntax unified
+ 708              		.thumb
+ 709              		.thumb_func
+ 710              		.fpu softvfp
+ 712              	_ZN7Context12TransitionToEP4Mode:
+ 713              		.fnstart
+ 714              	.LVL48:
+ 715              	.LFB98:
+  55:Core/Src/Intercom.cpp ****     if (this->mode == nullptr)
+ 716              		.loc 1 55 1 is_stmt 1 view -0
+ 717              		.cfi_startproc
+ 718              		@ args = 0, pretend = 0, frame = 0
+ 719              		@ frame_needed = 0, uses_anonymous_args = 0
+  55:Core/Src/Intercom.cpp ****     if (this->mode == nullptr)
+ 720              		.loc 1 55 1 is_stmt 0 view .LVU86
+ 721 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 17
+
+
+ 722              	.LCFI12:
+ 723              		.cfi_def_cfa_offset 8
+ 724              		.cfi_offset 3, -8
+ 725              		.cfi_offset 14, -4
+ 726 0002 0346     		mov	r3, r0
+ 727 0004 0846     		mov	r0, r1
+ 728              	.LVL49:
+  56:Core/Src/Intercom.cpp ****     {
+ 729              		.loc 1 56 5 is_stmt 1 view .LVU87
+  61:Core/Src/Intercom.cpp ****     this->mode->setMode(this);
+ 730              		.loc 1 61 5 view .LVU88
+  61:Core/Src/Intercom.cpp ****     this->mode->setMode(this);
+ 731              		.loc 1 61 16 is_stmt 0 view .LVU89
+ 732 0006 1960     		str	r1, [r3]
+  62:Core/Src/Intercom.cpp **** }
+ 733              		.loc 1 62 5 is_stmt 1 view .LVU90
+  62:Core/Src/Intercom.cpp **** }
+ 734              		.loc 1 62 24 is_stmt 0 view .LVU91
+ 735 0008 1946     		mov	r1, r3
+ 736              	.LVL50:
+  62:Core/Src/Intercom.cpp **** }
+ 737              		.loc 1 62 24 view .LVU92
+ 738 000a FFF7FEFF 		bl	_ZN4Mode7setModeEP7Context
+ 739              	.LVL51:
+  63:Core/Src/Intercom.cpp **** 
+ 740              		.loc 1 63 1 view .LVU93
+ 741 000e 08BD     		pop	{r3, pc}
+ 742              		.cfi_endproc
+ 743              	.LFE98:
+ 744              		.cantunwind
+ 745              		.fnend
+ 747              		.section	.text._ZN7ContextC2E12IntercomMode,"ax",%progbits
+ 748              		.align	1
+ 749              		.global	_ZN7ContextC2E12IntercomMode
+ 750              		.syntax unified
+ 751              		.thumb
+ 752              		.thumb_func
+ 753              		.fpu softvfp
+ 755              	_ZN7ContextC2E12IntercomMode:
+ 756              		.fnstart
+ 757              	.LVL52:
+ 758              	.LFB93:
+  18:Core/Src/Intercom.cpp **** {
+ 759              		.loc 1 18 1 is_stmt 1 view -0
+ 760              		.cfi_startproc
+ 761              		@ args = 0, pretend = 0, frame = 0
+ 762              		@ frame_needed = 0, uses_anonymous_args = 0
+  18:Core/Src/Intercom.cpp **** {
+ 763              		.loc 1 18 1 is_stmt 0 view .LVU95
+ 764 0000 10B5     		push	{r4, lr}
+ 765              		.save {r4, lr}
+ 766              	.LCFI13:
+ 767              		.cfi_def_cfa_offset 8
+ 768              		.cfi_offset 4, -8
+ 769              		.cfi_offset 14, -4
+ 770 0002 0446     		mov	r4, r0
+ 771              	.LBB70:
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 18
+
+
+  18:Core/Src/Intercom.cpp **** {
+ 772              		.loc 1 18 52 view .LVU96
+ 773 0004 0023     		movs	r3, #0
+ 774 0006 0360     		str	r3, [r0]
+  20:Core/Src/Intercom.cpp ****     {
+ 775              		.loc 1 20 5 is_stmt 1 view .LVU97
+ 776 0008 0329     		cmp	r1, #3
+ 777 000a 34D8     		bhi	.L58
+ 778 000c DFE801F0 		tbb	[pc, r1]
+ 779              	.L60:
+ 780 0010 02       		.byte	(.L63-.L60)/2
+ 781 0011 0F       		.byte	(.L62-.L60)/2
+ 782 0012 1B       		.byte	(.L61-.L60)/2
+ 783 0013 27       		.byte	(.L59-.L60)/2
+ 784              		.p2align 1
+ 785              	.L63:
+  22:Core/Src/Intercom.cpp ****     {
+ 786              		.loc 1 22 5 view .LVU98
+  23:Core/Src/Intercom.cpp ****         this->TransitionTo(new NormalMode);
+ 787              		.loc 1 23 5 view .LVU99
+  24:Core/Src/Intercom.cpp ****         break;
+ 788              		.loc 1 24 9 view .LVU100
+  24:Core/Src/Intercom.cpp ****         break;
+ 789              		.loc 1 24 32 is_stmt 0 view .LVU101
+ 790 0014 0820     		movs	r0, #8
+ 791              	.LVL53:
+  24:Core/Src/Intercom.cpp ****         break;
+ 792              		.loc 1 24 32 view .LVU102
+ 793 0016 FFF7FEFF 		bl	_Znwj
+ 794              	.LVL54:
+  24:Core/Src/Intercom.cpp ****         break;
+ 795              		.loc 1 24 32 view .LVU103
+ 796 001a 0146     		mov	r1, r0
+ 797              	.LVL55:
+ 798              	.LBB71:
+ 799              	.LBI71:
+  37:Core/Inc/Intercom.h **** {
+ 800              		.loc 2 37 7 is_stmt 1 view .LVU104
+ 801              	.LBB72:
+ 802              	.LBB73:
+ 803              	.LBI73:
+   9:Core/Inc/Intercom.h **** {
+ 804              		.loc 2 9 7 view .LVU105
+ 805              	.LBB74:
+ 806 001c 184B     		ldr	r3, .L66
+ 807 001e 0360     		str	r3, [r0]
+ 808              	.LVL56:
+   9:Core/Inc/Intercom.h **** {
+ 809              		.loc 2 9 7 is_stmt 0 view .LVU106
+ 810              	.LBE74:
+ 811              	.LBE73:
+  37:Core/Inc/Intercom.h **** {
+ 812              		.loc 2 37 7 view .LVU107
+ 813 0020 184B     		ldr	r3, .L66+4
+ 814 0022 0360     		str	r3, [r0]
+ 815              	.LVL57:
+  37:Core/Inc/Intercom.h **** {
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 19
+
+
+ 816              		.loc 2 37 7 view .LVU108
+ 817              	.LBE72:
+ 818              	.LBE71:
+  24:Core/Src/Intercom.cpp ****         break;
+ 819              		.loc 1 24 27 view .LVU109
+ 820 0024 2046     		mov	r0, r4
+ 821 0026 FFF7FEFF 		bl	_ZN7Context12TransitionToEP4Mode
+ 822              	.LVL58:
+  25:Core/Src/Intercom.cpp ****     }
+ 823              		.loc 1 25 9 is_stmt 1 view .LVU110
+ 824              	.L64:
+  25:Core/Src/Intercom.cpp ****     }
+ 825              		.loc 1 25 9 is_stmt 0 view .LVU111
+ 826              	.LBE70:
+  47:Core/Src/Intercom.cpp **** 
+ 827              		.loc 1 47 1 view .LVU112
+ 828 002a 2046     		mov	r0, r4
+ 829 002c 10BD     		pop	{r4, pc}
+ 830              	.LVL59:
+ 831              	.L62:
+ 832              	.LBB87:
+  27:Core/Src/Intercom.cpp ****     {
+ 833              		.loc 1 27 5 is_stmt 1 view .LVU113
+  28:Core/Src/Intercom.cpp ****         this->TransitionTo(new ClosedMode);
+ 834              		.loc 1 28 5 view .LVU114
+  29:Core/Src/Intercom.cpp ****         break;
+ 835              		.loc 1 29 9 view .LVU115
+  29:Core/Src/Intercom.cpp ****         break;
+ 836              		.loc 1 29 32 is_stmt 0 view .LVU116
+ 837 002e 0820     		movs	r0, #8
+ 838              	.LVL60:
+  29:Core/Src/Intercom.cpp ****         break;
+ 839              		.loc 1 29 32 view .LVU117
+ 840 0030 FFF7FEFF 		bl	_Znwj
+ 841              	.LVL61:
+  29:Core/Src/Intercom.cpp ****         break;
+ 842              		.loc 1 29 32 view .LVU118
+ 843 0034 0146     		mov	r1, r0
+ 844              	.LVL62:
+ 845              	.LBB75:
+ 846              	.LBI75:
+  43:Core/Inc/Intercom.h **** {
+ 847              		.loc 2 43 7 is_stmt 1 view .LVU119
+ 848              	.LBB76:
+ 849              	.LBB77:
+ 850              	.LBI77:
+   9:Core/Inc/Intercom.h **** {
+ 851              		.loc 2 9 7 view .LVU120
+ 852              	.LBB78:
+ 853 0036 124B     		ldr	r3, .L66
+ 854 0038 0360     		str	r3, [r0]
+ 855              	.LVL63:
+   9:Core/Inc/Intercom.h **** {
+ 856              		.loc 2 9 7 is_stmt 0 view .LVU121
+ 857              	.LBE78:
+ 858              	.LBE77:
+  43:Core/Inc/Intercom.h **** {
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 20
+
+
+ 859              		.loc 2 43 7 view .LVU122
+ 860 003a 134B     		ldr	r3, .L66+8
+ 861 003c 0360     		str	r3, [r0]
+ 862              	.LVL64:
+  43:Core/Inc/Intercom.h **** {
+ 863              		.loc 2 43 7 view .LVU123
+ 864              	.LBE76:
+ 865              	.LBE75:
+  29:Core/Src/Intercom.cpp ****         break;
+ 866              		.loc 1 29 27 view .LVU124
+ 867 003e 2046     		mov	r0, r4
+ 868 0040 FFF7FEFF 		bl	_ZN7Context12TransitionToEP4Mode
+ 869              	.LVL65:
+  30:Core/Src/Intercom.cpp ****     }
+ 870              		.loc 1 30 9 is_stmt 1 view .LVU125
+ 871 0044 F1E7     		b	.L64
+ 872              	.LVL66:
+ 873              	.L61:
+  32:Core/Src/Intercom.cpp ****     {
+ 874              		.loc 1 32 5 view .LVU126
+  33:Core/Src/Intercom.cpp ****         this->TransitionTo(new OpenMode);
+ 875              		.loc 1 33 5 view .LVU127
+  34:Core/Src/Intercom.cpp ****         break;
+ 876              		.loc 1 34 9 view .LVU128
+  34:Core/Src/Intercom.cpp ****         break;
+ 877              		.loc 1 34 32 is_stmt 0 view .LVU129
+ 878 0046 0820     		movs	r0, #8
+ 879              	.LVL67:
+  34:Core/Src/Intercom.cpp ****         break;
+ 880              		.loc 1 34 32 view .LVU130
+ 881 0048 FFF7FEFF 		bl	_Znwj
+ 882              	.LVL68:
+  34:Core/Src/Intercom.cpp ****         break;
+ 883              		.loc 1 34 32 view .LVU131
+ 884 004c 0146     		mov	r1, r0
+ 885              	.LVL69:
+ 886              	.LBB79:
+ 887              	.LBI79:
+  48:Core/Inc/Intercom.h **** {
+ 888              		.loc 2 48 7 is_stmt 1 view .LVU132
+ 889              	.LBB80:
+ 890              	.LBB81:
+ 891              	.LBI81:
+   9:Core/Inc/Intercom.h **** {
+ 892              		.loc 2 9 7 view .LVU133
+ 893              	.LBB82:
+ 894 004e 0C4B     		ldr	r3, .L66
+ 895 0050 0360     		str	r3, [r0]
+ 896              	.LVL70:
+   9:Core/Inc/Intercom.h **** {
+ 897              		.loc 2 9 7 is_stmt 0 view .LVU134
+ 898              	.LBE82:
+ 899              	.LBE81:
+  48:Core/Inc/Intercom.h **** {
+ 900              		.loc 2 48 7 view .LVU135
+ 901 0052 0E4B     		ldr	r3, .L66+12
+ 902 0054 0360     		str	r3, [r0]
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 21
+
+
+ 903              	.LVL71:
+  48:Core/Inc/Intercom.h **** {
+ 904              		.loc 2 48 7 view .LVU136
+ 905              	.LBE80:
+ 906              	.LBE79:
+  34:Core/Src/Intercom.cpp ****         break;
+ 907              		.loc 1 34 27 view .LVU137
+ 908 0056 2046     		mov	r0, r4
+ 909 0058 FFF7FEFF 		bl	_ZN7Context12TransitionToEP4Mode
+ 910              	.LVL72:
+  35:Core/Src/Intercom.cpp ****     }
+ 911              		.loc 1 35 9 is_stmt 1 view .LVU138
+ 912 005c E5E7     		b	.L64
+ 913              	.LVL73:
+ 914              	.L59:
+  37:Core/Src/Intercom.cpp ****     {
+ 915              		.loc 1 37 5 view .LVU139
+  38:Core/Src/Intercom.cpp ****         this->TransitionTo(new CondOpenMode);
+ 916              		.loc 1 38 5 view .LVU140
+  39:Core/Src/Intercom.cpp ****         break;
+ 917              		.loc 1 39 9 view .LVU141
+  39:Core/Src/Intercom.cpp ****         break;
+ 918              		.loc 1 39 32 is_stmt 0 view .LVU142
+ 919 005e 0820     		movs	r0, #8
+ 920              	.LVL74:
+  39:Core/Src/Intercom.cpp ****         break;
+ 921              		.loc 1 39 32 view .LVU143
+ 922 0060 FFF7FEFF 		bl	_Znwj
+ 923              	.LVL75:
+  39:Core/Src/Intercom.cpp ****         break;
+ 924              		.loc 1 39 32 view .LVU144
+ 925 0064 0146     		mov	r1, r0
+ 926              	.LVL76:
+ 927              	.LBB83:
+ 928              	.LBI83:
+ 929              		.loc 2 53 7 is_stmt 1 view .LVU145
+ 930              	.LBB84:
+ 931              	.LBB85:
+ 932              	.LBI85:
+   9:Core/Inc/Intercom.h **** {
+ 933              		.loc 2 9 7 view .LVU146
+ 934              	.LBB86:
+ 935 0066 064B     		ldr	r3, .L66
+ 936 0068 0360     		str	r3, [r0]
+ 937              	.LVL77:
+   9:Core/Inc/Intercom.h **** {
+ 938              		.loc 2 9 7 is_stmt 0 view .LVU147
+ 939              	.LBE86:
+ 940              	.LBE85:
+ 941              		.loc 2 53 7 view .LVU148
+ 942 006a 094B     		ldr	r3, .L66+16
+ 943 006c 0360     		str	r3, [r0]
+ 944              	.LVL78:
+ 945              		.loc 2 53 7 view .LVU149
+ 946              	.LBE84:
+ 947              	.LBE83:
+  39:Core/Src/Intercom.cpp ****         break;
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 22
+
+
+ 948              		.loc 1 39 27 view .LVU150
+ 949 006e 2046     		mov	r0, r4
+ 950 0070 FFF7FEFF 		bl	_ZN7Context12TransitionToEP4Mode
+ 951              	.LVL79:
+  40:Core/Src/Intercom.cpp ****     }
+ 952              		.loc 1 40 9 is_stmt 1 view .LVU151
+ 953 0074 D9E7     		b	.L64
+ 954              	.LVL80:
+ 955              	.L58:
+  43:Core/Src/Intercom.cpp ****         this->TransitionTo(nullptr);
+ 956              		.loc 1 43 5 view .LVU152
+  44:Core/Src/Intercom.cpp ****         break;
+ 957              		.loc 1 44 9 view .LVU153
+  44:Core/Src/Intercom.cpp ****         break;
+ 958              		.loc 1 44 27 is_stmt 0 view .LVU154
+ 959 0076 0021     		movs	r1, #0
+ 960              	.LVL81:
+  44:Core/Src/Intercom.cpp ****         break;
+ 961              		.loc 1 44 27 view .LVU155
+ 962 0078 FFF7FEFF 		bl	_ZN7Context12TransitionToEP4Mode
+ 963              	.LVL82:
+  45:Core/Src/Intercom.cpp ****     }
+ 964              		.loc 1 45 9 is_stmt 1 view .LVU156
+ 965 007c D5E7     		b	.L64
+ 966              	.L67:
+ 967 007e 00BF     		.align	2
+ 968              	.L66:
+ 969 0080 08000000 		.word	.LANCHOR1+8
+ 970 0084 08000000 		.word	.LANCHOR5+8
+ 971 0088 08000000 		.word	.LANCHOR4+8
+ 972 008c 08000000 		.word	.LANCHOR3+8
+ 973 0090 08000000 		.word	.LANCHOR2+8
+ 974              	.LBE87:
+ 975              		.cfi_endproc
+ 976              	.LFE93:
+ 977              		.fnend
+ 979              		.global	_ZN7ContextC1E12IntercomMode
+ 980              		.thumb_set _ZN7ContextC1E12IntercomMode,_ZN7ContextC2E12IntercomMode
+ 981              		.section	.rodata._ZN12CondOpenMode13KeyReadHandleEv.str1.4,"aMS",%progbits,1
+ 982              		.align	2
+ 983              	.LC4:
+ 984 0000 43757272 		.ascii	"Current mode is Conditionally Open. Switching to Op"
+ 984      656E7420 
+ 984      6D6F6465 
+ 984      20697320 
+ 984      436F6E64 
+ 985 0033 656E2E0D 		.ascii	"en.\015\012\000"
+ 985      0A00
+ 986              		.section	.text._ZN12CondOpenMode13KeyReadHandleEv,"ax",%progbits
+ 987              		.align	1
+ 988              		.global	_ZN12CondOpenMode13KeyReadHandleEv
+ 989              		.syntax unified
+ 990              		.thumb
+ 991              		.thumb_func
+ 992              		.fpu softvfp
+ 994              	_ZN12CondOpenMode13KeyReadHandleEv:
+ 995              		.fnstart
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 23
+
+
+ 996              	.LVL83:
+ 997              	.LFB103:
+  99:Core/Src/Intercom.cpp **** 
+ 100:Core/Src/Intercom.cpp **** void CondOpenMode::KeyReadHandle()
+ 101:Core/Src/Intercom.cpp **** {
+ 998              		.loc 1 101 1 view -0
+ 999              		.cfi_startproc
+ 1000              		@ args = 0, pretend = 0, frame = 0
+ 1001              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1002              		.loc 1 101 1 is_stmt 0 view .LVU158
+ 1003 0000 38B5     		push	{r3, r4, r5, lr}
+ 1004              		.save {r3, r4, r5, lr}
+ 1005              	.LCFI14:
+ 1006              		.cfi_def_cfa_offset 16
+ 1007              		.cfi_offset 3, -16
+ 1008              		.cfi_offset 4, -12
+ 1009              		.cfi_offset 5, -8
+ 1010              		.cfi_offset 14, -4
+ 1011 0002 0446     		mov	r4, r0
+ 102:Core/Src/Intercom.cpp ****     if (wig_available())
+ 1012              		.loc 1 102 5 is_stmt 1 view .LVU159
+ 1013              		.loc 1 102 22 is_stmt 0 view .LVU160
+ 1014 0004 FFF7FEFF 		bl	wig_available
+ 1015              	.LVL84:
+ 1016              		.loc 1 102 5 view .LVU161
+ 1017 0008 E0B1     		cbz	r0, .L68
+ 103:Core/Src/Intercom.cpp ****     {
+ 104:Core/Src/Intercom.cpp ****         UART_Printf("%s intercom was used. Key id: %d.\r\n", localInsideKeyRead ? "Inside" : "Outsi
+ 1018              		.loc 1 104 9 is_stmt 1 view .LVU162
+ 1019              		.loc 1 104 20 is_stmt 0 view .LVU163
+ 1020 000a 104B     		ldr	r3, .L73
+ 1021 000c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1022 000e D3B1     		cbz	r3, .L71
+ 1023 0010 0F4D     		ldr	r5, .L73+4
+ 1024              	.L70:
+ 1025              		.loc 1 104 20 discriminator 4 view .LVU164
+ 1026 0012 FFF7FEFF 		bl	getCode
+ 1027              	.LVL85:
+ 1028 0016 0246     		mov	r2, r0
+ 1029 0018 2946     		mov	r1, r5
+ 1030 001a 0E48     		ldr	r0, .L73+8
+ 1031 001c FFF7FEFF 		bl	_Z11UART_PrintfPKcz
+ 1032              	.LVL86:
+ 105:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+ 1033              		.loc 1 105 9 is_stmt 1 discriminator 4 view .LVU165
+ 1034              		.loc 1 105 18 is_stmt 0 discriminator 4 view .LVU166
+ 1035 0020 0D4B     		ldr	r3, .L73+12
+ 1036 0022 0022     		movs	r2, #0
+ 1037 0024 1A60     		str	r2, [r3]
+ 106:Core/Src/Intercom.cpp **** 
+ 107:Core/Src/Intercom.cpp ****         UART_Printf("Current mode is Conditionally Open. Switching to Open.\r\n");
+ 1038              		.loc 1 107 9 is_stmt 1 discriminator 4 view .LVU167
+ 1039              		.loc 1 107 20 is_stmt 0 discriminator 4 view .LVU168
+ 1040 0026 0D48     		ldr	r0, .L73+16
+ 1041 0028 FFF7FEFF 		bl	_Z11UART_PrintfPKcz
+ 1042              	.LVL87:
+ 108:Core/Src/Intercom.cpp ****         this->context->TransitionTo(new OpenMode);
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 24
+
+
+ 1043              		.loc 1 108 9 is_stmt 1 discriminator 4 view .LVU169
+ 1044              		.loc 1 108 15 is_stmt 0 discriminator 4 view .LVU170
+ 1045 002c 6468     		ldr	r4, [r4, #4]
+ 1046              	.LVL88:
+ 1047              		.loc 1 108 41 discriminator 4 view .LVU171
+ 1048 002e 0820     		movs	r0, #8
+ 1049 0030 FFF7FEFF 		bl	_Znwj
+ 1050              	.LVL89:
+ 1051 0034 0146     		mov	r1, r0
+ 1052              	.LVL90:
+ 1053              	.LBB88:
+ 1054              	.LBI88:
+  48:Core/Inc/Intercom.h **** {
+ 1055              		.loc 2 48 7 is_stmt 1 discriminator 4 view .LVU172
+ 1056              	.LBB89:
+ 1057              	.LBB90:
+ 1058              	.LBI90:
+   9:Core/Inc/Intercom.h **** {
+ 1059              		.loc 2 9 7 discriminator 4 view .LVU173
+ 1060              	.LBB91:
+ 1061 0036 0A4B     		ldr	r3, .L73+20
+ 1062 0038 0360     		str	r3, [r0]
+ 1063              	.LVL91:
+   9:Core/Inc/Intercom.h **** {
+ 1064              		.loc 2 9 7 is_stmt 0 discriminator 4 view .LVU174
+ 1065              	.LBE91:
+ 1066              	.LBE90:
+  48:Core/Inc/Intercom.h **** {
+ 1067              		.loc 2 48 7 discriminator 4 view .LVU175
+ 1068 003a 0A4B     		ldr	r3, .L73+24
+ 1069 003c 0360     		str	r3, [r0]
+ 1070              	.LVL92:
+  48:Core/Inc/Intercom.h **** {
+ 1071              		.loc 2 48 7 discriminator 4 view .LVU176
+ 1072              	.LBE89:
+ 1073              	.LBE88:
+ 1074              		.loc 1 108 36 discriminator 4 view .LVU177
+ 1075 003e 2046     		mov	r0, r4
+ 1076 0040 FFF7FEFF 		bl	_ZN7Context12TransitionToEP4Mode
+ 1077              	.LVL93:
+ 1078              	.L68:
+ 109:Core/Src/Intercom.cpp ****     }
+ 110:Core/Src/Intercom.cpp **** }
+ 1079              		.loc 1 110 1 view .LVU178
+ 1080 0044 38BD     		pop	{r3, r4, r5, pc}
+ 1081              	.LVL94:
+ 1082              	.L71:
+ 104:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+ 1083              		.loc 1 104 20 view .LVU179
+ 1084 0046 084D     		ldr	r5, .L73+28
+ 1085 0048 E3E7     		b	.L70
+ 1086              	.L74:
+ 1087 004a 00BF     		.align	2
+ 1088              	.L73:
+ 1089 004c 00000000 		.word	.LANCHOR0
+ 1090 0050 08000000 		.word	.LC2
+ 1091 0054 10000000 		.word	.LC3
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 25
+
+
+ 1092 0058 00000000 		.word	workMode
+ 1093 005c 00000000 		.word	.LC4
+ 1094 0060 08000000 		.word	.LANCHOR1+8
+ 1095 0064 08000000 		.word	.LANCHOR3+8
+ 1096 0068 00000000 		.word	.LC1
+ 1097              		.cfi_endproc
+ 1098              	.LFE103:
+ 1099              		.fnend
+ 1101              		.section	.text._ZN7Context12KeyReadEventEv,"ax",%progbits
+ 1102              		.align	1
+ 1103              		.global	_ZN7Context12KeyReadEventEv
+ 1104              		.syntax unified
+ 1105              		.thumb
+ 1106              		.thumb_func
+ 1107              		.fpu softvfp
+ 1109              	_ZN7Context12KeyReadEventEv:
+ 1110              		.fnstart
+ 1111              	.LVL95:
+ 1112              	.LFB99:
+  66:Core/Src/Intercom.cpp ****     this->mode->KeyReadHandle();
+ 1113              		.loc 1 66 1 is_stmt 1 view -0
+ 1114              		.cfi_startproc
+ 1115              		@ args = 0, pretend = 0, frame = 0
+ 1116              		@ frame_needed = 0, uses_anonymous_args = 0
+  66:Core/Src/Intercom.cpp ****     this->mode->KeyReadHandle();
+ 1117              		.loc 1 66 1 is_stmt 0 view .LVU181
+ 1118 0000 08B5     		push	{r3, lr}
+ 1119              		.save {r3, lr}
+ 1120              	.LCFI15:
+ 1121              		.cfi_def_cfa_offset 8
+ 1122              		.cfi_offset 3, -8
+ 1123              		.cfi_offset 14, -4
+  67:Core/Src/Intercom.cpp **** }
+ 1124              		.loc 1 67 5 is_stmt 1 view .LVU182
+  67:Core/Src/Intercom.cpp **** }
+ 1125              		.loc 1 67 11 is_stmt 0 view .LVU183
+ 1126 0002 0068     		ldr	r0, [r0]
+ 1127              	.LVL96:
+  67:Core/Src/Intercom.cpp **** }
+ 1128              		.loc 1 67 31 view .LVU184
+ 1129 0004 0368     		ldr	r3, [r0]
+ 1130 0006 9B68     		ldr	r3, [r3, #8]
+  67:Core/Src/Intercom.cpp **** }
+ 1131              		.loc 1 67 30 view .LVU185
+ 1132 0008 9847     		blx	r3
+ 1133              	.LVL97:
+  68:Core/Src/Intercom.cpp **** 
+ 1134              		.loc 1 68 1 view .LVU186
+ 1135 000a 08BD     		pop	{r3, pc}
+ 1136              		.cfi_endproc
+ 1137              	.LFE99:
+ 1138              		.fnend
+ 1140              		.section	.text._Z10verifyCodem,"ax",%progbits
+ 1141              		.align	1
+ 1142              		.global	_Z10verifyCodem
+ 1143              		.syntax unified
+ 1144              		.thumb
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 26
+
+
+ 1145              		.thumb_func
+ 1146              		.fpu softvfp
+ 1148              	_Z10verifyCodem:
+ 1149              		.fnstart
+ 1150              	.LVL98:
+ 1151              	.LFB104:
+ 111:Core/Src/Intercom.cpp **** 
+ 112:Core/Src/Intercom.cpp **** /**
+ 113:Core/Src/Intercom.cpp ****  * @brief Verify if code is allowed to enter/exit
+ 114:Core/Src/Intercom.cpp ****  * @retval bool
+ 115:Core/Src/Intercom.cpp ****  * @param code to verify it's validity
+ 116:Core/Src/Intercom.cpp **** */
+ 117:Core/Src/Intercom.cpp **** bool verifyCode(uint32_t code)
+ 118:Core/Src/Intercom.cpp **** {
+ 1152              		.loc 1 118 1 is_stmt 1 view -0
+ 1153              		.cfi_startproc
+ 1154              		@ args = 0, pretend = 0, frame = 0
+ 1155              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1156              		@ link register save eliminated.
+ 119:Core/Src/Intercom.cpp ****     uint32_t codes[] =
+ 1157              		.loc 1 119 5 view .LVU188
+ 120:Core/Src/Intercom.cpp ****         {12563593};
+ 121:Core/Src/Intercom.cpp **** 
+ 122:Core/Src/Intercom.cpp ****     for (unsigned int i = 0; i < sizeof(codes) / sizeof(codes[0]); i++)
+ 1158              		.loc 1 122 5 view .LVU189
+ 1159              	.LBB92:
+ 1160              		.loc 1 122 23 is_stmt 0 view .LVU190
+ 1161 0000 0023     		movs	r3, #0
+ 1162              	.LVL99:
+ 1163              	.L79:
+ 1164              		.loc 1 122 32 is_stmt 1 discriminator 1 view .LVU191
+ 1165 0002 23B9     		cbnz	r3, .L80
+ 123:Core/Src/Intercom.cpp ****     {
+ 124:Core/Src/Intercom.cpp ****         if (code == codes[i])
+ 1166              		.loc 1 124 9 view .LVU192
+ 1167 0004 044A     		ldr	r2, .L82
+ 1168 0006 9042     		cmp	r0, r2
+ 1169 0008 03D0     		beq	.L81
+ 122:Core/Src/Intercom.cpp ****     {
+ 1170              		.loc 1 122 5 discriminator 2 view .LVU193
+ 1171 000a 0133     		adds	r3, r3, #1
+ 1172              	.LVL100:
+ 122:Core/Src/Intercom.cpp ****     {
+ 1173              		.loc 1 122 5 is_stmt 0 discriminator 2 view .LVU194
+ 1174 000c F9E7     		b	.L79
+ 1175              	.L80:
+ 122:Core/Src/Intercom.cpp ****     {
+ 1176              		.loc 1 122 5 discriminator 2 view .LVU195
+ 1177              	.LBE92:
+ 125:Core/Src/Intercom.cpp ****             return true;
+ 126:Core/Src/Intercom.cpp ****     }
+ 127:Core/Src/Intercom.cpp **** 
+ 128:Core/Src/Intercom.cpp ****     return false;
+ 1178              		.loc 1 128 12 view .LVU196
+ 1179 000e 0020     		movs	r0, #0
+ 1180              	.LVL101:
+ 1181              		.loc 1 128 12 view .LVU197
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 27
+
+
+ 1182 0010 7047     		bx	lr
+ 1183              	.LVL102:
+ 1184              	.L81:
+ 1185              	.LBB93:
+ 125:Core/Src/Intercom.cpp ****             return true;
+ 1186              		.loc 1 125 20 view .LVU198
+ 1187 0012 0120     		movs	r0, #1
+ 1188              	.LVL103:
+ 125:Core/Src/Intercom.cpp ****             return true;
+ 1189              		.loc 1 125 20 view .LVU199
+ 1190              	.LBE93:
+ 129:Core/Src/Intercom.cpp **** }
+ 1191              		.loc 1 129 1 view .LVU200
+ 1192 0014 7047     		bx	lr
+ 1193              	.L83:
+ 1194 0016 00BF     		.align	2
+ 1195              	.L82:
+ 1196 0018 89B4BF00 		.word	12563593
+ 1197              		.cfi_endproc
+ 1198              	.LFE104:
+ 1199              		.cantunwind
+ 1200              		.fnend
+ 1202              		.section	.rodata._ZN10NormalMode13KeyReadHandleEv.str1.4,"aMS",%progbits,1
+ 1203              		.align	2
+ 1204              	.LC5:
+ 1205 0000 74657374 		.ascii	"test2\015\012\000"
+ 1205      320D0A00 
+ 1206              		.section	.text._ZN10NormalMode13KeyReadHandleEv,"ax",%progbits
+ 1207              		.align	1
+ 1208              		.global	_ZN10NormalMode13KeyReadHandleEv
+ 1209              		.syntax unified
+ 1210              		.thumb
+ 1211              		.thumb_func
+ 1212              		.fpu softvfp
+ 1214              	_ZN10NormalMode13KeyReadHandleEv:
+ 1215              		.fnstart
+ 1216              	.LVL104:
+ 1217              	.LFB100:
+  71:Core/Src/Intercom.cpp ****     if (wig_available() && verifyCode(getCode()))
+ 1218              		.loc 1 71 1 is_stmt 1 view -0
+ 1219              		.cfi_startproc
+ 1220              		@ args = 0, pretend = 0, frame = 0
+ 1221              		@ frame_needed = 0, uses_anonymous_args = 0
+  71:Core/Src/Intercom.cpp ****     if (wig_available() && verifyCode(getCode()))
+ 1222              		.loc 1 71 1 is_stmt 0 view .LVU202
+ 1223 0000 10B5     		push	{r4, lr}
+ 1224              		.save {r4, lr}
+ 1225              	.LCFI16:
+ 1226              		.cfi_def_cfa_offset 8
+ 1227              		.cfi_offset 4, -8
+ 1228              		.cfi_offset 14, -4
+  72:Core/Src/Intercom.cpp ****     {
+ 1229              		.loc 1 72 5 is_stmt 1 view .LVU203
+  72:Core/Src/Intercom.cpp ****     {
+ 1230              		.loc 1 72 22 is_stmt 0 view .LVU204
+ 1231 0002 FFF7FEFF 		bl	wig_available
+ 1232              	.LVL105:
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 28
+
+
+  72:Core/Src/Intercom.cpp ****     {
+ 1233              		.loc 1 72 25 view .LVU205
+ 1234 0006 00B9     		cbnz	r0, .L89
+ 1235              	.L84:
+  78:Core/Src/Intercom.cpp **** 
+ 1236              		.loc 1 78 1 view .LVU206
+ 1237 0008 10BD     		pop	{r4, pc}
+ 1238              	.L89:
+  72:Core/Src/Intercom.cpp ****     {
+ 1239              		.loc 1 72 38 discriminator 1 view .LVU207
+ 1240 000a FFF7FEFF 		bl	getCode
+ 1241              	.LVL106:
+ 1242 000e FFF7FEFF 		bl	_Z10verifyCodem
+ 1243              	.LVL107:
+  72:Core/Src/Intercom.cpp ****     {
+ 1244              		.loc 1 72 25 discriminator 1 view .LVU208
+ 1245 0012 0028     		cmp	r0, #0
+ 1246 0014 F8D0     		beq	.L84
+  74:Core/Src/Intercom.cpp ****         UART_Printf("%s intercom was used. Key id: %d.\r\n", localInsideKeyRead ? "Inside" : "Outsi
+ 1247              		.loc 1 74 9 is_stmt 1 view .LVU209
+  74:Core/Src/Intercom.cpp ****         UART_Printf("%s intercom was used. Key id: %d.\r\n", localInsideKeyRead ? "Inside" : "Outsi
+ 1248              		.loc 1 74 20 is_stmt 0 view .LVU210
+ 1249 0016 0A48     		ldr	r0, .L90
+ 1250 0018 FFF7FEFF 		bl	_Z11UART_PrintfPKcz
+ 1251              	.LVL108:
+  75:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+ 1252              		.loc 1 75 9 is_stmt 1 view .LVU211
+  75:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+ 1253              		.loc 1 75 20 is_stmt 0 view .LVU212
+ 1254 001c 094B     		ldr	r3, .L90+4
+ 1255 001e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1256 0020 5BB1     		cbz	r3, .L87
+ 1257 0022 094C     		ldr	r4, .L90+8
+ 1258              	.L86:
+  75:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+ 1259              		.loc 1 75 20 discriminator 4 view .LVU213
+ 1260 0024 FFF7FEFF 		bl	getCode
+ 1261              	.LVL109:
+ 1262 0028 0246     		mov	r2, r0
+ 1263 002a 2146     		mov	r1, r4
+ 1264 002c 0748     		ldr	r0, .L90+12
+ 1265 002e FFF7FEFF 		bl	_Z11UART_PrintfPKcz
+ 1266              	.LVL110:
+  76:Core/Src/Intercom.cpp ****     }
+ 1267              		.loc 1 76 9 is_stmt 1 discriminator 4 view .LVU214
+  76:Core/Src/Intercom.cpp ****     }
+ 1268              		.loc 1 76 18 is_stmt 0 discriminator 4 view .LVU215
+ 1269 0032 074B     		ldr	r3, .L90+16
+ 1270 0034 0022     		movs	r2, #0
+ 1271 0036 1A60     		str	r2, [r3]
+  78:Core/Src/Intercom.cpp **** 
+ 1272              		.loc 1 78 1 discriminator 4 view .LVU216
+ 1273 0038 E6E7     		b	.L84
+ 1274              	.L87:
+  75:Core/Src/Intercom.cpp ****         workMode = WorkMode::TempOpenMode;
+ 1275              		.loc 1 75 20 view .LVU217
+ 1276 003a 064C     		ldr	r4, .L90+20
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 29
+
+
+ 1277 003c F2E7     		b	.L86
+ 1278              	.L91:
+ 1279 003e 00BF     		.align	2
+ 1280              	.L90:
+ 1281 0040 00000000 		.word	.LC5
+ 1282 0044 00000000 		.word	.LANCHOR0
+ 1283 0048 08000000 		.word	.LC2
+ 1284 004c 10000000 		.word	.LC3
+ 1285 0050 00000000 		.word	workMode
+ 1286 0054 00000000 		.word	.LC1
+ 1287              		.cfi_endproc
+ 1288              	.LFE100:
+ 1289              		.fnend
+ 1291              		.section	.text._Z8intercombb,"ax",%progbits
+ 1292              		.align	1
+ 1293              		.global	_Z8intercombb
+ 1294              		.syntax unified
+ 1295              		.thumb
+ 1296              		.thumb_func
+ 1297              		.fpu softvfp
+ 1299              	_Z8intercombb:
+ 1300              		.fnstart
+ 1301              	.LVL111:
+ 1302              	.LFB105:
+ 130:Core/Src/Intercom.cpp **** 
+ 131:Core/Src/Intercom.cpp **** void intercom(bool insideKey, bool outsideKey)
+ 132:Core/Src/Intercom.cpp **** {
+ 1303              		.loc 1 132 1 is_stmt 1 view -0
+ 1304              		.cfi_startproc
+ 1305              		@ args = 0, pretend = 0, frame = 0
+ 1306              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1307              		.loc 1 132 1 is_stmt 0 view .LVU219
+ 1308 0000 10B5     		push	{r4, lr}
+ 1309              		.save {r4, lr}
+ 1310              	.LCFI17:
+ 1311              		.cfi_def_cfa_offset 8
+ 1312              		.cfi_offset 4, -8
+ 1313              		.cfi_offset 14, -4
+ 133:Core/Src/Intercom.cpp ****     localInsideKeyRead = insideKey;
+ 1314              		.loc 1 133 5 is_stmt 1 view .LVU220
+ 1315              		.loc 1 133 24 is_stmt 0 view .LVU221
+ 1316 0002 114B     		ldr	r3, .L98
+ 1317 0004 1870     		strb	r0, [r3]
+ 134:Core/Src/Intercom.cpp ****     localOutsideKeyRead = outsideKey;
+ 1318              		.loc 1 134 5 is_stmt 1 view .LVU222
+ 1319              		.loc 1 134 25 is_stmt 0 view .LVU223
+ 1320 0006 114B     		ldr	r3, .L98+4
+ 1321 0008 1970     		strb	r1, [r3]
+ 135:Core/Src/Intercom.cpp **** 
+ 136:Core/Src/Intercom.cpp ****     Context *context = new Context(intercomMode);
+ 1322              		.loc 1 136 5 is_stmt 1 view .LVU224
+ 1323              		.loc 1 136 48 is_stmt 0 view .LVU225
+ 1324 000a 0420     		movs	r0, #4
+ 1325              	.LVL112:
+ 1326              	.LEHB0:
+ 1327              		.loc 1 136 48 view .LVU226
+ 1328 000c FFF7FEFF 		bl	_Znwj
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 30
+
+
+ 1329              	.LVL113:
+ 1330              	.LEHE0:
+ 1331              		.loc 1 136 48 view .LVU227
+ 1332 0010 0446     		mov	r4, r0
+ 1333 0012 0F4B     		ldr	r3, .L98+8
+ 1334 0014 1968     		ldr	r1, [r3]
+ 1335              	.LEHB1:
+ 1336 0016 FFF7FEFF 		bl	_ZN7ContextC1E12IntercomMode
+ 1337              	.LVL114:
+ 1338              	.LEHE1:
+ 137:Core/Src/Intercom.cpp ****     context->KeyReadEvent();
+ 1339              		.loc 1 137 5 is_stmt 1 discriminator 2 view .LVU228
+ 1340              		.loc 1 137 26 is_stmt 0 discriminator 2 view .LVU229
+ 1341 001a 2046     		mov	r0, r4
+ 1342              	.LEHB2:
+ 1343 001c FFF7FEFF 		bl	_ZN7Context12KeyReadEventEv
+ 1344              	.LVL115:
+ 138:Core/Src/Intercom.cpp ****     delete context;
+ 1345              		.loc 1 138 5 is_stmt 1 discriminator 2 view .LVU230
+ 1346 0020 34B1     		cbz	r4, .L93
+ 1347              		.loc 1 138 12 is_stmt 0 discriminator 1 view .LVU231
+ 1348 0022 2046     		mov	r0, r4
+ 1349 0024 FFF7FEFF 		bl	_ZN7ContextD1Ev
+ 1350              	.LVL116:
+ 1351 0028 0421     		movs	r1, #4
+ 1352 002a 2046     		mov	r0, r4
+ 1353 002c FFF7FEFF 		bl	_ZdlPvj
+ 1354              	.LVL117:
+ 1355              	.L93:
+ 139:Core/Src/Intercom.cpp **** 
+ 140:Core/Src/Intercom.cpp ****     localInsideKeyRead = false;
+ 1356              		.loc 1 140 5 is_stmt 1 view .LVU232
+ 1357              		.loc 1 140 24 is_stmt 0 view .LVU233
+ 1358 0030 0023     		movs	r3, #0
+ 1359 0032 054A     		ldr	r2, .L98
+ 1360 0034 1370     		strb	r3, [r2]
+ 141:Core/Src/Intercom.cpp ****     localOutsideKeyRead = false;
+ 1361              		.loc 1 141 5 is_stmt 1 view .LVU234
+ 1362              		.loc 1 141 25 is_stmt 0 view .LVU235
+ 1363 0036 054A     		ldr	r2, .L98+4
+ 1364 0038 1370     		strb	r3, [r2]
+ 142:Core/Src/Intercom.cpp **** }...
+ 1365              		.loc 1 142 1 view .LVU236
+ 1366 003a 10BD     		pop	{r4, pc}
+ 1367              	.LVL118:
+ 1368              	.L95:
+ 136:Core/Src/Intercom.cpp ****     Context *context = new Context(intercomMode);
+ 1369              		.loc 1 136 48 view .LVU237
+ 1370 003c 0421     		movs	r1, #4
+ 1371 003e 2046     		mov	r0, r4
+ 1372 0040 FFF7FEFF 		bl	_ZdlPvj
+ 1373              	.LVL119:
+ 1374 0044 FFF7FEFF 		bl	__cxa_end_cleanup
+ 1375              	.LVL120:
+ 1376              	.LEHE2:
+ 1377              	.L99:
+ 1378              		.align	2
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 31
+
+
+ 1379              	.L98:
+ 1380 0048 00000000 		.word	.LANCHOR0
+ 1381 004c 00000000 		.word	.LANCHOR6
+ 1382 0050 00000000 		.word	intercomMode
+ 1383              		.cfi_endproc
+ 1384              	.LFE105:
+ 1385              		.global	__gxx_personality_v0
+ 1386              		.personality	__gxx_personality_v0
+ 1387              		.handlerdata
+ 1388              	.LLSDA105:
+ 1389 0008 FF       		.byte	0xff
+ 1390 0009 FF       		.byte	0xff
+ 1391 000a 01       		.byte	0x1
+ 1392 000b 0C       		.uleb128 .LLSDACSE105-.LLSDACSB105
+ 1393              	.LLSDACSB105:
+ 1394 000c 0C       		.uleb128 .LEHB0-.LFB105
+ 1395 000d 04       		.uleb128 .LEHE0-.LEHB0
+ 1396 000e 00       		.uleb128 0
+ 1397 000f 00       		.uleb128 0
+ 1398 0010 16       		.uleb128 .LEHB1-.LFB105
+ 1399 0011 04       		.uleb128 .LEHE1-.LEHB1
+ 1400 0012 3C       		.uleb128 .L95-.LFB105
+ 1401 0013 00       		.uleb128 0
+ 1402 0014 1C       		.uleb128 .LEHB2-.LFB105
+ 1403 0015 2C       		.uleb128 .LEHE2-.LEHB2
+ 1404 0016 00       		.uleb128 0
+ 1405 0017 00       		.uleb128 0
+ 1406              	.LLSDACSE105:
+ 1407              		.section	.text._Z8intercombb
+ 1408              		.fnend
+ 1410              		.global	_ZTS4Mode
+ 1411              		.global	_ZTI4Mode
+ 1412              		.global	_ZTS10NormalMode
+ 1413              		.global	_ZTI10NormalMode
+ 1414              		.global	_ZTS10ClosedMode
+ 1415              		.global	_ZTI10ClosedMode
+ 1416              		.global	_ZTS8OpenMode
+ 1417              		.global	_ZTI8OpenMode
+ 1418              		.global	_ZTS12CondOpenMode
+ 1419              		.global	_ZTI12CondOpenMode
+ 1420              		.global	_ZTV4Mode
+ 1421              		.global	_ZTV10NormalMode
+ 1422              		.global	_ZTV10ClosedMode
+ 1423              		.global	_ZTV8OpenMode
+ 1424              		.global	_ZTV12CondOpenMode
+ 1425              		.global	localOutsideKeyRead
+ 1426              		.global	localInsideKeyRead
+ 1427              		.section	.bss.localInsideKeyRead,"aw",%nobits
+ 1428              		.set	.LANCHOR0,. + 0
+ 1431              	localInsideKeyRead:
+ 1432 0000 00       		.space	1
+ 1433              		.section	.bss.localOutsideKeyRead,"aw",%nobits
+ 1434              		.set	.LANCHOR6,. + 0
+ 1437              	localOutsideKeyRead:
+ 1438 0000 00       		.space	1
+ 1439              		.section	.rodata._ZTI10ClosedMode,"a"
+ 1440              		.align	2
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 32
+
+
+ 1443              	_ZTI10ClosedMode:
+ 1444 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 1445 0004 00000000 		.word	_ZTS10ClosedMode
+ 1446 0008 00000000 		.word	_ZTI4Mode
+ 1447              		.section	.rodata._ZTI10NormalMode,"a"
+ 1448              		.align	2
+ 1451              	_ZTI10NormalMode:
+ 1452 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 1453 0004 00000000 		.word	_ZTS10NormalMode
+ 1454 0008 00000000 		.word	_ZTI4Mode
+ 1455              		.section	.rodata._ZTI12CondOpenMode,"a"
+ 1456              		.align	2
+ 1459              	_ZTI12CondOpenMode:
+ 1460 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 1461 0004 00000000 		.word	_ZTS12CondOpenMode
+ 1462 0008 00000000 		.word	_ZTI4Mode
+ 1463              		.section	.rodata._ZTI4Mode,"a"
+ 1464              		.align	2
+ 1467              	_ZTI4Mode:
+ 1468 0000 08000000 		.word	_ZTVN10__cxxabiv117__class_type_infoE+8
+ 1469 0004 00000000 		.word	_ZTS4Mode
+ 1470              		.section	.rodata._ZTI8OpenMode,"a"
+ 1471              		.align	2
+ 1474              	_ZTI8OpenMode:
+ 1475 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 1476 0004 00000000 		.word	_ZTS8OpenMode
+ 1477 0008 00000000 		.word	_ZTI4Mode
+ 1478              		.section	.rodata._ZTS10ClosedMode,"a"
+ 1479              		.align	2
+ 1482              	_ZTS10ClosedMode:
+ 1483 0000 3130436C 		.ascii	"10ClosedMode\000"
+ 1483      6F736564 
+ 1483      4D6F6465 
+ 1483      00
+ 1484              		.section	.rodata._ZTS10NormalMode,"a"
+ 1485              		.align	2
+ 1488              	_ZTS10NormalMode:
+ 1489 0000 31304E6F 		.ascii	"10NormalMode\000"
+ 1489      726D616C 
+ 1489      4D6F6465 
+ 1489      00
+ 1490              		.section	.rodata._ZTS12CondOpenMode,"a"
+ 1491              		.align	2
+ 1494              	_ZTS12CondOpenMode:
+ 1495 0000 3132436F 		.ascii	"12CondOpenMode\000"
+ 1495      6E644F70 
+ 1495      656E4D6F 
+ 1495      646500
+ 1496              		.section	.rodata._ZTS4Mode,"a"
+ 1497              		.align	2
+ 1500              	_ZTS4Mode:
+ 1501 0000 344D6F64 		.ascii	"4Mode\000"
+ 1501      6500
+ 1502              		.section	.rodata._ZTS8OpenMode,"a"
+ 1503              		.align	2
+ 1506              	_ZTS8OpenMode:
+ 1507 0000 384F7065 		.ascii	"8OpenMode\000"
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 33
+
+
+ 1507      6E4D6F64 
+ 1507      6500
+ 1508              		.section	.rodata._ZTV10ClosedMode,"a"
+ 1509              		.align	2
+ 1510              		.set	.LANCHOR4,. + 0
+ 1513              	_ZTV10ClosedMode:
+ 1514 0000 00000000 		.word	0
+ 1515 0004 00000000 		.word	_ZTI10ClosedMode
+ 1516 0008 00000000 		.word	_ZN10ClosedModeD1Ev
+ 1517 000c 00000000 		.word	_ZN10ClosedModeD0Ev
+ 1518 0010 00000000 		.word	_ZN10ClosedMode13KeyReadHandleEv
+ 1519              		.section	.rodata._ZTV10NormalMode,"a"
+ 1520              		.align	2
+ 1521              		.set	.LANCHOR5,. + 0
+ 1524              	_ZTV10NormalMode:
+ 1525 0000 00000000 		.word	0
+ 1526 0004 00000000 		.word	_ZTI10NormalMode
+ 1527 0008 00000000 		.word	_ZN10NormalModeD1Ev
+ 1528 000c 00000000 		.word	_ZN10NormalModeD0Ev
+ 1529 0010 00000000 		.word	_ZN10NormalMode13KeyReadHandleEv
+ 1530              		.section	.rodata._ZTV12CondOpenMode,"a"
+ 1531              		.align	2
+ 1532              		.set	.LANCHOR2,. + 0
+ 1535              	_ZTV12CondOpenMode:
+ 1536 0000 00000000 		.word	0
+ 1537 0004 00000000 		.word	_ZTI12CondOpenMode
+ 1538 0008 00000000 		.word	_ZN12CondOpenModeD1Ev
+ 1539 000c 00000000 		.word	_ZN12CondOpenModeD0Ev
+ 1540 0010 00000000 		.word	_ZN12CondOpenMode13KeyReadHandleEv
+ 1541              		.section	.rodata._ZTV4Mode,"a"
+ 1542              		.align	2
+ 1543              		.set	.LANCHOR1,. + 0
+ 1546              	_ZTV4Mode:
+ 1547 0000 00000000 		.word	0
+ 1548 0004 00000000 		.word	_ZTI4Mode
+ 1549 0008 00000000 		.word	0
+ 1550 000c 00000000 		.word	0
+ 1551 0010 00000000 		.word	__cxa_pure_virtual
+ 1552              		.section	.rodata._ZTV8OpenMode,"a"
+ 1553              		.align	2
+ 1554              		.set	.LANCHOR3,. + 0
+ 1557              	_ZTV8OpenMode:
+ 1558 0000 00000000 		.word	0
+ 1559 0004 00000000 		.word	_ZTI8OpenMode
+ 1560 0008 00000000 		.word	_ZN8OpenModeD1Ev
+ 1561 000c 00000000 		.word	_ZN8OpenModeD0Ev
+ 1562 0010 00000000 		.word	_ZN8OpenMode13KeyReadHandleEv
+ 1563              		.text
+ 1564              	.Letext0:
+ 1565              		.file 3 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\machine\\_def
+ 1566              		.file 4 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\sys\\_stdint.
+ 1567              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h"
+ 1568              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 1569              		.file 7 "Core/Inc/IntercomMode.h"
+ 1570              		.file 8 "Core/Inc/WorkMode.h"
+ 1571              		.file 9 "Core/Inc/Flags.h"
+ 1572              		.file 10 "Core/Inc/wiegand.h"
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 34
+
+
+ 1573              		.file 11 "Core/Inc/UART_Print.h"
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 35
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 Intercom.cpp
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:16     .rodata._ZN10ClosedMode13KeyReadHandleEv.str1.4:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:20     .text._ZN10ClosedMode13KeyReadHandleEv:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:28     .text._ZN10ClosedMode13KeyReadHandleEv:00000000 _ZN10ClosedMode13KeyReadHandleEv
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:77     .text._ZN10ClosedMode13KeyReadHandleEv:00000024 $d
+.ARM.extab.text._ZN10ClosedMode13KeyReadHandleEv:00000000 $d
+.ARM.exidx.text._ZN10ClosedMode13KeyReadHandleEv:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:85     .rodata._ZN8OpenMode13KeyReadHandleEv.str1.4:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:95     .text._ZN8OpenMode13KeyReadHandleEv:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:102    .text._ZN8OpenMode13KeyReadHandleEv:00000000 _ZN8OpenMode13KeyReadHandleEv
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:153    .text._ZN8OpenMode13KeyReadHandleEv:0000002c $d
+.ARM.exidx.text._ZN8OpenMode13KeyReadHandleEv:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:163    .text._ZN4ModeD2Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:170    .text._ZN4ModeD2Ev:00000000 _ZN4ModeD2Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:189    .text._ZN4ModeD2Ev:00000008 $d
+     .ARM.exidx.text._ZN4ModeD2Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:170    .text._ZN4ModeD2Ev:00000000 _ZN4ModeD1Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:198    .text._ZN12CondOpenModeD2Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:205    .text._ZN12CondOpenModeD2Ev:00000000 _ZN12CondOpenModeD2Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:236    .text._ZN12CondOpenModeD2Ev:00000010 $d
+.ARM.exidx.text._ZN12CondOpenModeD2Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:205    .text._ZN12CondOpenModeD2Ev:00000000 _ZN12CondOpenModeD1Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:245    .text._ZN12CondOpenModeD0Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:252    .text._ZN12CondOpenModeD0Ev:00000000 _ZN12CondOpenModeD0Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:290    .text._ZN12CondOpenModeD0Ev:00000018 $d
+.ARM.exidx.text._ZN12CondOpenModeD0Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:297    .text._ZN8OpenModeD2Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:304    .text._ZN8OpenModeD2Ev:00000000 _ZN8OpenModeD2Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:334    .text._ZN8OpenModeD2Ev:00000010 $d
+ .ARM.exidx.text._ZN8OpenModeD2Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:304    .text._ZN8OpenModeD2Ev:00000000 _ZN8OpenModeD1Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:343    .text._ZN8OpenModeD0Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:350    .text._ZN8OpenModeD0Ev:00000000 _ZN8OpenModeD0Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:388    .text._ZN8OpenModeD0Ev:00000018 $d
+ .ARM.exidx.text._ZN8OpenModeD0Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:395    .text._ZN10ClosedModeD2Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:402    .text._ZN10ClosedModeD2Ev:00000000 _ZN10ClosedModeD2Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:432    .text._ZN10ClosedModeD2Ev:00000010 $d
+.ARM.exidx.text._ZN10ClosedModeD2Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:402    .text._ZN10ClosedModeD2Ev:00000000 _ZN10ClosedModeD1Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:441    .text._ZN10ClosedModeD0Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:448    .text._ZN10ClosedModeD0Ev:00000000 _ZN10ClosedModeD0Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:486    .text._ZN10ClosedModeD0Ev:00000018 $d
+.ARM.exidx.text._ZN10ClosedModeD0Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:493    .text._ZN10NormalModeD2Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:500    .text._ZN10NormalModeD2Ev:00000000 _ZN10NormalModeD2Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:530    .text._ZN10NormalModeD2Ev:00000010 $d
+.ARM.exidx.text._ZN10NormalModeD2Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:500    .text._ZN10NormalModeD2Ev:00000000 _ZN10NormalModeD1Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:539    .text._ZN10NormalModeD0Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:546    .text._ZN10NormalModeD0Ev:00000000 _ZN10NormalModeD0Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:584    .text._ZN10NormalModeD0Ev:00000018 $d
+.ARM.exidx.text._ZN10NormalModeD0Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:591    .text._ZN4ModeD0Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:598    .text._ZN4ModeD0Ev:00000000 _ZN4ModeD0Ev
+     .ARM.exidx.text._ZN4ModeD0Ev:00000000 $d
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 36
+
+
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:630    .text._ZN4Mode7setModeEP7Context:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:637    .text._ZN4Mode7setModeEP7Context:00000000 _ZN4Mode7setModeEP7Context
+.ARM.exidx.text._ZN4Mode7setModeEP7Context:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:657    .text._ZN7ContextD2Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:664    .text._ZN7ContextD2Ev:00000000 _ZN7ContextD2Ev
+  .ARM.exidx.text._ZN7ContextD2Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:664    .text._ZN7ContextD2Ev:00000000 _ZN7ContextD1Ev
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:705    .text._ZN7Context12TransitionToEP4Mode:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:712    .text._ZN7Context12TransitionToEP4Mode:00000000 _ZN7Context12TransitionToEP4Mode
+.ARM.exidx.text._ZN7Context12TransitionToEP4Mode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:748    .text._ZN7ContextC2E12IntercomMode:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:755    .text._ZN7ContextC2E12IntercomMode:00000000 _ZN7ContextC2E12IntercomMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:780    .text._ZN7ContextC2E12IntercomMode:00000010 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:784    .text._ZN7ContextC2E12IntercomMode:00000014 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:969    .text._ZN7ContextC2E12IntercomMode:00000080 $d
+.ARM.exidx.text._ZN7ContextC2E12IntercomMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:755    .text._ZN7ContextC2E12IntercomMode:00000000 _ZN7ContextC1E12IntercomMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:982    .rodata._ZN12CondOpenMode13KeyReadHandleEv.str1.4:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:987    .text._ZN12CondOpenMode13KeyReadHandleEv:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:994    .text._ZN12CondOpenMode13KeyReadHandleEv:00000000 _ZN12CondOpenMode13KeyReadHandleEv
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1089   .text._ZN12CondOpenMode13KeyReadHandleEv:0000004c $d
+.ARM.exidx.text._ZN12CondOpenMode13KeyReadHandleEv:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1102   .text._ZN7Context12KeyReadEventEv:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1109   .text._ZN7Context12KeyReadEventEv:00000000 _ZN7Context12KeyReadEventEv
+.ARM.extab.text._ZN7Context12KeyReadEventEv:00000000 $d
+.ARM.exidx.text._ZN7Context12KeyReadEventEv:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1141   .text._Z10verifyCodem:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1148   .text._Z10verifyCodem:00000000 _Z10verifyCodem
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1196   .text._Z10verifyCodem:00000018 $d
+  .ARM.exidx.text._Z10verifyCodem:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1203   .rodata._ZN10NormalMode13KeyReadHandleEv.str1.4:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1207   .text._ZN10NormalMode13KeyReadHandleEv:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1214   .text._ZN10NormalMode13KeyReadHandleEv:00000000 _ZN10NormalMode13KeyReadHandleEv
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1281   .text._ZN10NormalMode13KeyReadHandleEv:00000040 $d
+.ARM.exidx.text._ZN10NormalMode13KeyReadHandleEv:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1292   .text._Z8intercombb:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1299   .text._Z8intercombb:00000000 _Z8intercombb
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1380   .text._Z8intercombb:00000048 $d
+    .ARM.extab.text._Z8intercombb:00000000 $d
+    .ARM.exidx.text._Z8intercombb:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1500   .rodata._ZTS4Mode:00000000 _ZTS4Mode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1467   .rodata._ZTI4Mode:00000000 _ZTI4Mode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1488   .rodata._ZTS10NormalMode:00000000 _ZTS10NormalMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1451   .rodata._ZTI10NormalMode:00000000 _ZTI10NormalMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1482   .rodata._ZTS10ClosedMode:00000000 _ZTS10ClosedMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1443   .rodata._ZTI10ClosedMode:00000000 _ZTI10ClosedMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1506   .rodata._ZTS8OpenMode:00000000 _ZTS8OpenMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1474   .rodata._ZTI8OpenMode:00000000 _ZTI8OpenMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1494   .rodata._ZTS12CondOpenMode:00000000 _ZTS12CondOpenMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1459   .rodata._ZTI12CondOpenMode:00000000 _ZTI12CondOpenMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1546   .rodata._ZTV4Mode:00000000 _ZTV4Mode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1524   .rodata._ZTV10NormalMode:00000000 _ZTV10NormalMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1513   .rodata._ZTV10ClosedMode:00000000 _ZTV10ClosedMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1557   .rodata._ZTV8OpenMode:00000000 _ZTV8OpenMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1535   .rodata._ZTV12CondOpenMode:00000000 _ZTV12CondOpenMode
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1437   .bss.localOutsideKeyRead:00000000 localOutsideKeyRead
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1431   .bss.localInsideKeyRead:00000000 localInsideKeyRead
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s 			page 37
+
+
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1432   .bss.localInsideKeyRead:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1438   .bss.localOutsideKeyRead:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1440   .rodata._ZTI10ClosedMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1448   .rodata._ZTI10NormalMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1456   .rodata._ZTI12CondOpenMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1464   .rodata._ZTI4Mode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1471   .rodata._ZTI8OpenMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1479   .rodata._ZTS10ClosedMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1485   .rodata._ZTS10NormalMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1491   .rodata._ZTS12CondOpenMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1497   .rodata._ZTS4Mode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1503   .rodata._ZTS8OpenMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1509   .rodata._ZTV10ClosedMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1520   .rodata._ZTV10NormalMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1531   .rodata._ZTV12CondOpenMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1542   .rodata._ZTV4Mode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccr0eAtw.s:1553   .rodata._ZTV8OpenMode:00000000 $d
+                           .group:00000000 _ZN12CondOpenModeD5Ev
+                           .group:00000000 _ZN8OpenModeD5Ev
+                           .group:00000000 _ZN10ClosedModeD5Ev
+                           .group:00000000 _ZN10NormalModeD5Ev
+
+UNDEFINED SYMBOLS
+wig_available
+getCode
+_Z11UART_PrintfPKcz
+workMode
+previousWorkMode
+__aeabi_unwind_cpp_pr1
+__aeabi_unwind_cpp_pr0
+_ZdlPvj
+_Znwj
+__cxa_end_cleanup
+intercomMode
+__gxx_personality_v0
+_ZTVN10__cxxabiv120__si_class_type_infoE
+_ZTVN10__cxxabiv117__class_type_infoE
+__cxa_pure_virtual

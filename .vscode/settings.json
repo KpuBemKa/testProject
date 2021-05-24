@@ -5,7 +5,9 @@
     "cortex-debug.armToolchainPath": "E:\\DEV\\TOOLS\\GCC-ARM-NONE-EABI-10-2020-Q4-MAJOR\\BIN",
     "files.associations": {
         "main.h": "c",
-        "stdarg.h": "c"
+        "stdarg.h": "c",
+        "stm32f1xx_hal.h": "c"
     },
-    "cortex-debug.openocdPath": "E:\\DEV\\TOOLS\\OPENOCD-20210301-0.10.0\\BIN\\OPENOCD.EXE"
+    "cortex-debug.openocdPath": "openocd",
+    "C_Cpp.errorSquiggles": "Enabled"
 }

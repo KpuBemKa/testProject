@@ -1,27 +1,5 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
+/*----> Includes <----*/
 #include "main.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include "string.h"
 #include <stdio.h>
 #include "wiegand.h"
@@ -35,18 +13,22 @@
 #include "WorkMode.h"
 #include "IntercomMode.h"
 #include "InvertedPinOut.h"
+#include "UART_Print.h"
+#include "Intercom.h"
+#include "Flags.h"
 
-/* Private variables ---------------------------------------------------------*/
+/*----> Variables <----*/
 UART_HandleTypeDef huart1;
 volatile uint8_t wig_flag_inrt = 1;
 
-IntercomMode intercomMode = IntercomMode::NormalMode;
-WorkMode workMode = WorkMode::NoMode, previousWorkMode = WorkMode::NoMode;
-
-/* Private function prototypes -----------------------------------------------*/
+/*----> STM Init Fucntion Prototypes <----*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
+
+bool
+    insideKeyRead = false,
+    outsideKeyRead = false;
 
 /*----> Functions Protoypes <----*/
 
@@ -65,7 +47,7 @@ void DoorSensorEvent();
 /**
  * @brief Event to listen for intercoms
 */
-void KeyReadEvent();
+//void KeyReadEvent();
 /**
  * @brief Event to listen for pressed buttons
 */
@@ -92,11 +74,6 @@ void AlarmEvent();
  * @retval bool
 */
 bool verifyCode(uint32_t code);
-/**
- * @brief printf
- * @retval None
-*/
-void UART_Printf(const char *fmt, ...);
 /**
  * @brief Switch mode depending on the current one
  * @retval None
@@ -137,20 +114,12 @@ InvertedPinOut insideGreenLed(GreenLed_1_GPIO_Port, GreenLed_1_Pin);
 InvertedPinOut outsideGreenLed(GreenLed_2_GPIO_Port, GreenLed_2_Pin);
 
 Timer doorSensorTimer(0, 0);
-/*----------> Flags <----------*/
-
-bool
-    insideButtonPressed = false,
-    outsideButtonPressed = false,
-    insideKeyRead = false,
-    outsideKeyRead = false,
-    doorSensorFirstTime = true;
 
 uint32_t
     timmeTrack = 0,
     timme = 0;
 
-/*-------> Init Functions <-------*/
+/*-------> STM Init Functions <-------*/
 
 /**
   * @brief System Clock Configuration
@@ -195,14 +164,6 @@ void SystemClock_Config(void)
   */
 static void MX_USART1_UART_Init(void)
 {
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
   huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
@@ -215,9 +176,6 @@ static void MX_USART1_UART_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
 }
 
 /**
@@ -278,10 +236,10 @@ static void MX_GPIO_Init(void)
 
 int main(void)
 {
+  UART_Printf("\ntest.\r\n");
   HAL_Init();
 
   SystemClock_Config();
-
   MX_GPIO_Init();
   MX_USART1_UART_Init();
 
@@ -299,7 +257,9 @@ int main(void)
 
     DoorSensorEvent();
 
-    KeyReadEvent();
+    intercom(insideKeyRead, outsideKeyRead);
+
+    //KeyReadEvent();
 
     ButtonPressedEvent();
 
@@ -357,7 +317,7 @@ void DoorSensorEvent()
   }
 }
 
-void KeyReadEvent()
+/* void KeyReadEvent()
 {
   if (wig_available() && workMode == WorkMode::NoMode)
   {
@@ -385,7 +345,7 @@ void KeyReadEvent()
     insideKeyRead = false;
     outsideKeyRead = false;
   }
-}
+} */
 
 void ButtonPressedEvent()
 {
@@ -394,6 +354,12 @@ void ButtonPressedEvent()
     UART_Printf("%s button was used.\r\n", insideButtonPressed ? "Inside" : "Outside");
 
     workMode = WorkMode::TempOpenMode;
+
+    if (intercomMode == IntercomMode::CondOpenMode)
+    {
+      UART_Printf("Current mode is Conditionally Open. Switching to Open.\r\n");
+      intercomMode = IntercomMode::OpenMode;
+    }
 
     insideButtonPressed = false;
     outsideButtonPressed = false;
@@ -630,7 +596,7 @@ void UART_Printf(const char *fmt, ...)
   va_end(args);
 }
 
-bool verifyCode(uint32_t code)
+/* bool verifyCode(uint32_t code)
 {
   uint32_t codes[] =
       {12563593};
@@ -642,7 +608,7 @@ bool verifyCode(uint32_t code)
   }
 
   return false;
-}
+} */
 
 void switchMode()
 {

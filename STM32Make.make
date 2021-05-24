@@ -57,7 +57,16 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
 
 
 CPP_SOURCES = \
+Core/Src/ConstantRelay.cpp \
+Core/Src/Flags.cpp \
+Core/Src/ImpulseRelay.cpp \
+Core/Src/Intercom.cpp \
+Core/Src/InterruptPin.cpp \
+Core/Src/InvertedPinOut.cpp \
+Core/Src/PinIn.cpp \
 Core/Src/PinOut.cpp \
+Core/Src/Timer.cpp \
+Core/Src/UART_Print.cpp \
 Core/Src/main.cpp
 
 
