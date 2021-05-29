@@ -15,12 +15,14 @@
 #include "IntercomMode.h"
 #include "InvertedPinOut.h"
 #include "UART_Print.h"
-#include "Intercom.h"
-#include "Flags.h"
+#include "Intercom/Context.h"
+#include "Intercom/NormalMode.h"
+#include "Intercom/ClosedMode.h"
+#include "Intercom/OpenMode.h"
+#include "Intercom/CondOpenMode.h"
 
 /**
- * TODO
- * распределить в разные файлы
+ * TODO:
  * 
 */
 
@@ -33,9 +35,15 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 
+IntercomMode intercomMode;
+WorkMode workMode, previousWorkMode;
+
 bool
     insideKeyRead = false,
-    outsideKeyRead = false;
+    outsideKeyRead = false,
+    insideButtonPressed = false,
+    outsideButtonPressed = false,
+    doorSensorFirstTime = false;
 
 /*----> Functions Protoypes <----*/
 
@@ -360,33 +368,6 @@ void KeyReadEvent()
     insideKeyRead = false;
     outsideKeyRead = false;
   }
-
-  /* if (wig_available() && workMode == WorkMode::NoMode)
-  {
-    if (intercomMode != IntercomMode::ClosedMode && verifyCode(getCode()))
-    {
-      UART_Printf("%s intercom was used. Key id: %d.\r\n", insideKeyRead ? "Inside" : "Outside", getCode());
-
-      workMode = WorkMode::TempOpenMode;
-
-      if (intercomMode == IntercomMode::CondOpenMode)
-      {
-        UART_Printf("Current mode is Conditionally Open. Switching to Open.\r\n");
-        intercomMode = IntercomMode::OpenMode;
-      }
-    }
-    else
-    {
-      (intercomMode == IntercomMode::ClosedMode) ? UART_Printf("Acces denied, door is closed. Key id: %d.\r\n", getCode())
-                                                 : UART_Printf("Acces denied. Key is not authorized to enter. Key id: %d.\r\n", getCode());
-
-      previousWorkMode = workMode;
-      workMode = WorkMode::DenyMode;
-    }
-
-    insideKeyRead = false;
-    outsideKeyRead = false;
-  } */
 }
 
 void ButtonPressedEvent()

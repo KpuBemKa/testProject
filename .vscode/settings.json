@@ -8,6 +8,6 @@
         "stdarg.h": "c",
         "stm32f1xx_hal.h": "c"
     },
-    "cortex-debug.openocdPath": "openocd",
+    "cortex-debug.openocdPath": "E:\\DEV\\TOOLS\\OPENOCD-20210301-0.10.0\\BIN\\OPENOCD.EXE",
     "C_Cpp.errorSquiggles": "Enabled"
 }
