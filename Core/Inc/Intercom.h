@@ -1,8 +1,6 @@
 #pragma once
-#include "wiegand.h"
+#include <cstdint>
 #include "UART_Print.h"
-#include "Flags.h"
-#include "IntercomMode.h"
 
 class Context;
 
@@ -14,9 +12,9 @@ protected:
 public:
     virtual ~Mode();
 
-    void setMode(Context *context);
+    void SetMode(Context *context);
 
-    virtual void KeyReadHandle() = 0;
+    virtual bool CheckKey(uint32_t key) = 0;
 };
 
 class Context
@@ -25,34 +23,33 @@ private:
     Mode *mode;
 
 public:
-    Context(IntercomMode intercomMode);
+    Context(Mode *mode);
 
     ~Context();
 
     void TransitionTo(Mode *mode);
 
-    void KeyReadEvent();
+    bool CheckKey(uint32_t key);
+
 };
 
 class NormalMode : public Mode
 {
 public:
-    virtual void KeyReadHandle();
+    bool CheckKey(uint32_t key) override;
 };
 
 class ClosedMode : public Mode
 {
-    virtual void KeyReadHandle();
+    bool CheckKey(uint32_t key) override;
 };
 
 class OpenMode : public Mode
 {
-    virtual void KeyReadHandle();
+   bool CheckKey(uint32_t key) override;
 };
 
 class CondOpenMode : public Mode
 {
-    virtual void KeyReadHandle();
+    bool CheckKey(uint32_t key) override;
 };
-
-void intercom(bool insideKeyRead, bool outsideKeyRead);

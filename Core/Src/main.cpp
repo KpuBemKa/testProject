@@ -1,9 +1,10 @@
 /*----> Includes <----*/
+#include <cstdarg>
+#include <cstring>
+#include <cstdio>
+
 #include "main.h"
-#include "string.h"
-#include <stdio.h>
 #include "wiegand.h"
-#include <stdarg.h>
 #include "PinIn.h"
 #include "PinOut.h"
 #include "ConstantRelay.h"
@@ -16,6 +17,12 @@
 #include "UART_Print.h"
 #include "Intercom.h"
 #include "Flags.h"
+
+/**
+ * TODO
+ * распределить в разные файлы
+ * 
+*/
 
 /*----> Variables <----*/
 UART_HandleTypeDef huart1;
@@ -47,7 +54,7 @@ void DoorSensorEvent();
 /**
  * @brief Event to listen for intercoms
 */
-//void KeyReadEvent();
+void KeyReadEvent();
 /**
  * @brief Event to listen for pressed buttons
 */
@@ -114,6 +121,11 @@ InvertedPinOut insideGreenLed(GreenLed_1_GPIO_Port, GreenLed_1_Pin);
 InvertedPinOut outsideGreenLed(GreenLed_2_GPIO_Port, GreenLed_2_Pin);
 
 Timer doorSensorTimer(0, 0);
+
+Context *insideIntercom = new Context(new NormalMode);
+Context *outsideIntercom = new Context(new NormalMode);
+
+/* UART_Print print; */
 
 uint32_t
     timmeTrack = 0,
@@ -236,13 +248,14 @@ static void MX_GPIO_Init(void)
 
 int main(void)
 {
-  UART_Printf("\ntest.\r\n");
   HAL_Init();
 
   SystemClock_Config();
   MX_GPIO_Init();
   MX_USART1_UART_Init();
 
+  UART_Printf("test\r\n");
+  
   UART_Printf("\nSwitched to Normal mode.\r\n");
   insideGreenLed.turnOff();
   outsideGreenLed.turnOff();
@@ -257,9 +270,7 @@ int main(void)
 
     DoorSensorEvent();
 
-    intercom(insideKeyRead, outsideKeyRead);
-
-    //KeyReadEvent();
+    KeyReadEvent();
 
     ButtonPressedEvent();
 
@@ -317,9 +328,40 @@ void DoorSensorEvent()
   }
 }
 
-/* void KeyReadEvent()
+void KeyReadEvent()
 {
-  if (wig_available() && workMode == WorkMode::NoMode)
+  if (wig_available())
+  {
+    bool permissionGave = false;
+
+    if (insideKeyRead)
+    {
+      permissionGave = insideIntercom->CheckKey(getCode());
+    }
+    else
+    {
+      permissionGave = outsideIntercom->CheckKey(getCode());
+    }
+
+    if (permissionGave)
+    {
+      (insideKeyRead) ? UART_Printf("Inside intercom gave permission. Key id: %d\r\n", getCode())
+                      : UART_Printf("Outside intercom gave permission. Key id: %d\r\n", getCode());
+
+      workMode = WorkMode::TempOpenMode;
+    }
+    else
+    {
+      UART_Printf("Acces denied. Key id: %d\r\n", getCode());
+
+      workMode = WorkMode::DenyMode;
+    }
+
+    insideKeyRead = false;
+    outsideKeyRead = false;
+  }
+
+  /* if (wig_available() && workMode == WorkMode::NoMode)
   {
     if (intercomMode != IntercomMode::ClosedMode && verifyCode(getCode()))
     {
@@ -344,8 +386,8 @@ void DoorSensorEvent()
 
     insideKeyRead = false;
     outsideKeyRead = false;
-  }
-} */
+  } */
+}
 
 void ButtonPressedEvent()
 {
@@ -509,7 +551,7 @@ void AlarmEvent()
       siren.turnOff();
     }
 
-    if (HAL_GetTick() - alarmTimer.getStartTime() > 2000 && ((wig_available() && verifyCode(getCode())) /* || cancelled from server */))
+    if (HAL_GetTick() - alarmTimer.getStartTime() > 2000 /* ((wig_available() && verifyCode(getCode())) */ /* || cancelled from server */)
     {
       workMode = WorkMode::TempOpenMode;
       siren.turnOff();
@@ -617,35 +659,40 @@ void switchMode()
   case IntercomMode::NormalMode:
   {
     UART_Printf("\nSwitched to Closed mode.\r\n");
-    intercomMode = IntercomMode::ClosedMode;
+    insideIntercom->TransitionTo(new ClosedMode);
+    outsideIntercom->TransitionTo(new ClosedMode);
     lock.turnOff();
     break;
   }
   case IntercomMode::ClosedMode:
   {
     UART_Printf("\nSwitched to Open mode.\r\n");
-    intercomMode = IntercomMode::OpenMode;
+    insideIntercom->TransitionTo(new OpenMode);
+    outsideIntercom->TransitionTo(new OpenMode);
     lock.turnOn();
     break;
   }
   case IntercomMode::OpenMode:
   {
     UART_Printf("\nSwitched to CondOpen mode.\r\n");
-    intercomMode = IntercomMode::CondOpenMode;
+    insideIntercom->TransitionTo(new CondOpenMode);
+    outsideIntercom->TransitionTo(new CondOpenMode);
     lock.turnOff();
     break;
   }
   case IntercomMode::CondOpenMode:
   {
     UART_Printf("\nSwitched to Normal mode.\r\n");
-    intercomMode = IntercomMode::NormalMode;
+    insideIntercom->TransitionTo(new NormalMode);
+    outsideIntercom->TransitionTo(new NormalMode);
     lock.turnOff();
     break;
   }
   default:
   {
     UART_Printf("Unknown mode, switched to normal.\r\n");
-    intercomMode = IntercomMode::NormalMode;
+    insideIntercom->TransitionTo(new NormalMode);
+    outsideIntercom->TransitionTo(new NormalMode);
     lock.turnOff();
     break;
   }
