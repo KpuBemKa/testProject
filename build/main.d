@@ -24,8 +24,10 @@ build/main.o: Core/Src/main.cpp Core/Inc/main.h \
  Core/Inc/main.h Core/Inc/PinIn.h Core/Inc/State.h Core/Inc/PinOut.h \
  Core/Inc/ConstantRelay.h Core/Inc/ImpulseRelay.h Core/Inc/InterruptPin.h \
  Core/Inc/Timer.h Core/Inc/WorkMode.h Core/Inc/IntercomMode.h \
- Core/Inc/InvertedPinOut.h Core/Inc/UART_Print.h Core/Inc/Intercom.h \
- Core/Inc/Flags.h
+ Core/Inc/InvertedPinOut.h Core/Inc/UART_Print.h \
+ Core/Inc/Intercom/NormalMode.h Core/Inc/Intercom/Intercom.h \
+ Core/Inc/Side.h Core/Inc/Access.h Core/Inc/Intercom/ClosedMode.h \
+ Core/Inc/Intercom/OpenMode.h Core/Inc/Intercom/CondOpenMode.h
 Core/Inc/main.h:
 Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 Core/Inc/stm32f1xx_hal_conf.h:
@@ -64,5 +66,10 @@ Core/Inc/WorkMode.h:
 Core/Inc/IntercomMode.h:
 Core/Inc/InvertedPinOut.h:
 Core/Inc/UART_Print.h:
-Core/Inc/Intercom.h:
-Core/Inc/Flags.h:
+Core/Inc/Intercom/NormalMode.h:
+Core/Inc/Intercom/Intercom.h:
+Core/Inc/Side.h:
+Core/Inc/Access.h:
+Core/Inc/Intercom/ClosedMode.h:
+Core/Inc/Intercom/OpenMode.h:
+Core/Inc/Intercom/CondOpenMode.h:

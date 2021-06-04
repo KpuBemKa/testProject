@@ -2,6 +2,7 @@
 
 InterruptPin::InterruptPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) : PinIn(GPIOx, GPIO_Pin)
 {
+    this->stateChanged = false;
 }
 
 bool InterruptPin::isStateChanged()

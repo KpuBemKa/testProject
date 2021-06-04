@@ -1,8 +1,9 @@
 #pragma once
-#include "Mode.h"
+#include "Intercom.h"
+#include "Access.h"
 
 class NormalMode : public Mode
 {
 public:
-    bool CheckKey(uint32_t key) override;
+    bool CheckKey(uint32_t key, Side side) override;
 };

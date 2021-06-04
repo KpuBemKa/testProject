@@ -1,8 +1,8 @@
 #include "Intercom/CondOpenMode.h"
 
-bool CondOpenMode::CheckKey(uint32_t key)
+bool CondOpenMode::CheckKey(uint32_t key, Side side)
 {
-    this->context->TransitionTo(new OpenMode);
-
+    this->intercom->TransitionTo(new OpenMode);
+    
     return true;
 }

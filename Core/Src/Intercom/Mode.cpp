@@ -1,10 +1,10 @@
-#include "Intercom/Mode.h"
+#include "Intercom/Intercom.h"
 
 Mode::~Mode()
 {
 }
 
-void Mode::SetMode(Context *context)
+void Mode::SetMode(Intercom *intercom)
 {
-    this->context = context;
+    this->intercom = intercom;
 }

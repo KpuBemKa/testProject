@@ -1,8 +1,9 @@
 #pragma once
-#include "Mode.h"
+#include "Intercom.h"
 #include "Intercom/OpenMode.h"
 
 class CondOpenMode : public Mode
 {
-    bool CheckKey(uint32_t key) override;
+public:
+    bool CheckKey(uint32_t key, Side side) override;
 };

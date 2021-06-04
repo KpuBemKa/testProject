@@ -1,3 +1,4 @@
+/* #pragma once
 #include "Flags.h"
 
 bool
@@ -6,4 +7,4 @@ bool
     doorSensorFirstTime = true;
 
 IntercomMode intercomMode = IntercomMode::NormalMode;
-WorkMode workMode = WorkMode::NoMode, previousWorkMode = WorkMode::NoMode;
+WorkMode workMode = WorkMode::NoMode, previousWorkMode = WorkMode::NoMode; */

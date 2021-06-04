@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s 			page 1
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc5rWiFc.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -15,54 +15,11 @@ ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s 			page 1
   12              		.text
   13              	.Ltext0:
   14              		.cfi_sections	.debug_frame
-  15              		.global	previousWorkMode
-  16              		.global	workMode
-  17              		.global	intercomMode
-  18              		.global	doorSensorFirstTime
-  19              		.global	outsideButtonPressed
-  20              		.global	insideButtonPressed
-  21              		.section	.bss.insideButtonPressed,"aw",%nobits
-  24              	insideButtonPressed:
-  25 0000 00       		.space	1
-  26              		.section	.bss.intercomMode,"aw",%nobits
-  27              		.align	2
-  30              	intercomMode:
-  31 0000 00000000 		.space	4
-  32              		.section	.bss.outsideButtonPressed,"aw",%nobits
-  35              	outsideButtonPressed:
-  36 0000 00       		.space	1
-  37              		.section	.data.doorSensorFirstTime,"aw"
-  40              	doorSensorFirstTime:
-  41 0000 01       		.byte	1
-  42              		.section	.data.previousWorkMode,"aw"
-  43              		.align	2
-  46              	previousWorkMode:
-  47 0000 04000000 		.word	4
-  48              		.section	.data.workMode,"aw"
-  49              		.align	2
-  52              	workMode:
-  53 0000 04000000 		.word	4
-  54              		.text
-  55              	.Letext0:
-  56              		.file 1 "Core/Inc/IntercomMode.h"
-  57              		.file 2 "Core/Inc/WorkMode.h"
-  58              		.file 3 "Core/Inc/Flags.h"
-  59              		.file 4 "Core/Src/Flags.cpp"
-ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s 			page 2
+  15              	.Letext0:
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\cc5rWiFc.s 			page 2
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 Flags.cpp
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:46     .data.previousWorkMode:00000000 previousWorkMode
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:52     .data.workMode:00000000 workMode
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:30     .bss.intercomMode:00000000 intercomMode
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:40     .data.doorSensorFirstTime:00000000 doorSensorFirstTime
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:35     .bss.outsideButtonPressed:00000000 outsideButtonPressed
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:24     .bss.insideButtonPressed:00000000 insideButtonPressed
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:25     .bss.insideButtonPressed:00000000 $d
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:27     .bss.intercomMode:00000000 $d
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:36     .bss.outsideButtonPressed:00000000 $d
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:43     .data.previousWorkMode:00000000 $d
-C:\Users\Admin\AppData\Local\Temp\cc7HRNKN.s:49     .data.workMode:00000000 $d
 
 NO UNDEFINED SYMBOLS

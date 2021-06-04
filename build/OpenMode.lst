@@ -1,0 +1,222 @@
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.eabi_attribute 20, 1
+   3              		.eabi_attribute 21, 1
+   4              		.eabi_attribute 23, 3
+   5              		.eabi_attribute 24, 1
+   6              		.eabi_attribute 25, 1
+   7              		.eabi_attribute 26, 1
+   8              		.eabi_attribute 30, 1
+   9              		.eabi_attribute 34, 1
+  10              		.eabi_attribute 18, 4
+  11              		.file	"OpenMode.cpp"
+  12              		.text
+  13              	.Ltext0:
+  14              		.cfi_sections	.debug_frame
+  15              		.section	.text._ZN8OpenMode8CheckKeyEm4Side,"ax",%progbits
+  16              		.align	1
+  17              		.global	_ZN8OpenMode8CheckKeyEm4Side
+  18              		.arch armv7-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu softvfp
+  24              	_ZN8OpenMode8CheckKeyEm4Side:
+  25              		.fnstart
+  26              	.LVL0:
+  27              	.LFB0:
+  28              		.file 1 "Core/Src/Intercom/OpenMode.cpp"
+   1:Core/Src/Intercom/OpenMode.cpp **** #include "Intercom/OpenMode.h"
+   2:Core/Src/Intercom/OpenMode.cpp **** 
+   3:Core/Src/Intercom/OpenMode.cpp **** bool OpenMode::CheckKey(uint32_t key, Side side)
+   4:Core/Src/Intercom/OpenMode.cpp **** {
+  29              		.loc 1 4 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+   5:Core/Src/Intercom/OpenMode.cpp ****     return true;
+  34              		.loc 1 5 5 view .LVU1
+   6:Core/Src/Intercom/OpenMode.cpp **** }...
+  35              		.loc 1 6 1 is_stmt 0 view .LVU2
+  36 0000 0120     		movs	r0, #1
+  37              	.LVL1:
+  38              		.loc 1 6 1 view .LVU3
+  39 0002 7047     		bx	lr
+  40              		.cfi_endproc
+  41              	.LFE0:
+  42              		.cantunwind
+  43              		.fnend
+  45              		.section	.text._ZN8OpenModeD2Ev,"axG",%progbits,_ZN8OpenModeD5Ev,comdat
+  46              		.align	1
+  47              		.weak	_ZN8OpenModeD2Ev
+  48              		.syntax unified
+  49              		.thumb
+  50              		.thumb_func
+  51              		.fpu softvfp
+  53              	_ZN8OpenModeD2Ev:
+  54              		.fnstart
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s 			page 2
+
+
+  55              	.LVL2:
+  56              	.LFB2:
+  57              		.file 2 "Core/Inc/Intercom/OpenMode.h"
+   1:Core/Inc/Intercom/OpenMode.h **** #pragma once
+   2:Core/Inc/Intercom/OpenMode.h **** #include "Intercom.h"
+   3:Core/Inc/Intercom/OpenMode.h **** 
+   4:Core/Inc/Intercom/OpenMode.h **** class OpenMode : public Mode
+  58              		.loc 2 4 7 is_stmt 1 view -0
+  59              		.cfi_startproc
+  60              		@ args = 0, pretend = 0, frame = 0
+  61              		@ frame_needed = 0, uses_anonymous_args = 0
+  62              		.loc 2 4 7 is_stmt 0 view .LVU5
+  63 0000 10B5     		push	{r4, lr}
+  64              	.LCFI0:
+  65              		.cfi_def_cfa_offset 8
+  66              		.cfi_offset 4, -8
+  67              		.cfi_offset 14, -4
+  68 0002 0446     		mov	r4, r0
+  69              	.LBB5:
+  70              		.loc 2 4 7 view .LVU6
+  71 0004 024B     		ldr	r3, .L4
+  72 0006 0360     		str	r3, [r0]
+  73 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+  74              	.LVL3:
+  75              		.loc 2 4 7 view .LVU7
+  76              	.LBE5:
+  77 000c 2046     		mov	r0, r4
+  78 000e 10BD     		pop	{r4, pc}
+  79              	.LVL4:
+  80              	.L5:
+  81              		.loc 2 4 7 view .LVU8
+  82              		.align	2
+  83              	.L4:
+  84 0010 08000000 		.word	.LANCHOR0+8
+  85              		.cfi_endproc
+  86              	.LFE2:
+  87              		.cantunwind
+  88              		.fnend
+  90              		.weak	_ZN8OpenModeD1Ev
+  91              		.thumb_set _ZN8OpenModeD1Ev,_ZN8OpenModeD2Ev
+  92              		.section	.text._ZN8OpenModeD0Ev,"axG",%progbits,_ZN8OpenModeD5Ev,comdat
+  93              		.align	1
+  94              		.weak	_ZN8OpenModeD0Ev
+  95              		.syntax unified
+  96              		.thumb
+  97              		.thumb_func
+  98              		.fpu softvfp
+ 100              	_ZN8OpenModeD0Ev:
+ 101              		.fnstart
+ 102              	.LVL5:
+ 103              	.LFB4:
+ 104              		.loc 2 4 7 is_stmt 1 view -0
+ 105              		.cfi_startproc
+ 106              		@ args = 0, pretend = 0, frame = 0
+ 107              		@ frame_needed = 0, uses_anonymous_args = 0
+ 108              		.loc 2 4 7 is_stmt 0 view .LVU10
+ 109 0000 10B5     		push	{r4, lr}
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s 			page 3
+
+
+ 110              	.LCFI1:
+ 111              		.cfi_def_cfa_offset 8
+ 112              		.cfi_offset 4, -8
+ 113              		.cfi_offset 14, -4
+ 114 0002 0446     		mov	r4, r0
+ 115              	.LVL6:
+ 116              	.LBB6:
+ 117              	.LBI6:
+ 118              		.loc 2 4 7 is_stmt 1 view .LVU11
+ 119              	.LBB7:
+ 120 0004 044B     		ldr	r3, .L8
+ 121 0006 0360     		str	r3, [r0]
+ 122 0008 FFF7FEFF 		bl	_ZN4ModeD2Ev
+ 123              	.LVL7:
+ 124              		.loc 2 4 7 is_stmt 0 view .LVU12
+ 125              	.LBE7:
+ 126              	.LBE6:
+ 127 000c 0821     		movs	r1, #8
+ 128 000e 2046     		mov	r0, r4
+ 129 0010 FFF7FEFF 		bl	_ZdlPvj
+ 130              	.LVL8:
+ 131 0014 2046     		mov	r0, r4
+ 132 0016 10BD     		pop	{r4, pc}
+ 133              	.LVL9:
+ 134              	.L9:
+ 135              		.loc 2 4 7 view .LVU13
+ 136              		.align	2
+ 137              	.L8:
+ 138 0018 08000000 		.word	.LANCHOR0+8
+ 139              		.cfi_endproc
+ 140              	.LFE4:
+ 141              		.cantunwind
+ 142              		.fnend
+ 144              		.global	_ZTS8OpenMode
+ 145              		.global	_ZTI8OpenMode
+ 146              		.global	_ZTV8OpenMode
+ 147              		.section	.rodata._ZTI8OpenMode,"a"
+ 148              		.align	2
+ 151              	_ZTI8OpenMode:
+ 152 0000 08000000 		.word	_ZTVN10__cxxabiv120__si_class_type_infoE+8
+ 153 0004 00000000 		.word	_ZTS8OpenMode
+ 154 0008 00000000 		.word	_ZTI4Mode
+ 155              		.section	.rodata._ZTS8OpenMode,"a"
+ 156              		.align	2
+ 159              	_ZTS8OpenMode:
+ 160 0000 384F7065 		.ascii	"8OpenMode\000"
+ 160      6E4D6F64 
+ 160      6500
+ 161              		.section	.rodata._ZTV8OpenMode,"a"
+ 162              		.align	2
+ 163              		.set	.LANCHOR0,. + 0
+ 166              	_ZTV8OpenMode:
+ 167 0000 00000000 		.word	0
+ 168 0004 00000000 		.word	_ZTI8OpenMode
+ 169 0008 00000000 		.word	_ZN8OpenModeD1Ev
+ 170 000c 00000000 		.word	_ZN8OpenModeD0Ev
+ 171 0010 00000000 		.word	_ZN8OpenMode8CheckKeyEm4Side
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s 			page 4
+
+
+ 172              		.text
+ 173              	.Letext0:
+ 174              		.file 3 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\c++\\10.2.1\\
+ 175              		.file 4 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\c++\\10.2.1\\
+ 176              		.file 5 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\machine\\_def
+ 177              		.file 6 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\sys\\_stdint.
+ 178              		.file 7 "e:\\dev\\tools\\gcc-arm-none-eabi-10-2020-q4-major\\arm-none-eabi\\include\\stdint.h"
+ 179              		.file 8 "<built-in>"
+ 180              		.file 9 "Core/Inc/Side.h"
+ARM GAS  C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 OpenMode.cpp
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:16     .text._ZN8OpenMode8CheckKeyEm4Side:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:24     .text._ZN8OpenMode8CheckKeyEm4Side:00000000 _ZN8OpenMode8CheckKeyEm4Side
+.ARM.exidx.text._ZN8OpenMode8CheckKeyEm4Side:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:46     .text._ZN8OpenModeD2Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:53     .text._ZN8OpenModeD2Ev:00000000 _ZN8OpenModeD2Ev
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:84     .text._ZN8OpenModeD2Ev:00000010 $d
+ .ARM.exidx.text._ZN8OpenModeD2Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:53     .text._ZN8OpenModeD2Ev:00000000 _ZN8OpenModeD1Ev
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:93     .text._ZN8OpenModeD0Ev:00000000 $t
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:100    .text._ZN8OpenModeD0Ev:00000000 _ZN8OpenModeD0Ev
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:138    .text._ZN8OpenModeD0Ev:00000018 $d
+ .ARM.exidx.text._ZN8OpenModeD0Ev:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:159    .rodata._ZTS8OpenMode:00000000 _ZTS8OpenMode
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:151    .rodata._ZTI8OpenMode:00000000 _ZTI8OpenMode
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:166    .rodata._ZTV8OpenMode:00000000 _ZTV8OpenMode
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:148    .rodata._ZTI8OpenMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:156    .rodata._ZTS8OpenMode:00000000 $d
+C:\Users\Admin\AppData\Local\Temp\ccyovUiO.s:162    .rodata._ZTV8OpenMode:00000000 $d
+                           .group:00000000 _ZN8OpenModeD5Ev
+
+UNDEFINED SYMBOLS
+_ZN4ModeD2Ev
+_ZdlPvj
+_ZTVN10__cxxabiv120__si_class_type_infoE
+_ZTI4Mode
