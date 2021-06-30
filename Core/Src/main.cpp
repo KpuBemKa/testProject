@@ -2,8 +2,6 @@
 #include <cstdarg>
 #include <cstring>
 #include <cstdio>
-#include <iostream>
-#include <vector>
 
 #include "main.h"
 #include "wiegand.h"
@@ -22,12 +20,14 @@
 #include "Intercom/OpenMode.h"
 #include "Intercom/CondOpenMode.h"
 #include "Side.h"
-#include "User.h"
+/* #include "User.h" */
 
 /**
  * TODO:
  * Сделать проход по времени
  * Хранить данные на rom памяти
+ * CondOpenMode тоже должен проверять ключи
+ * Сделать изменение режимов интеркома по времени
  * 
  * DONE:
 */

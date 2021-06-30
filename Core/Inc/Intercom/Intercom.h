@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "Side.h"
+#include "User.h"
 
 class Intercom;
 
