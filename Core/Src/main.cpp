@@ -2,6 +2,8 @@
 #include <cstdarg>
 #include <cstring>
 #include <cstdio>
+#include <iostream>
+#include <vector>
 
 #include "main.h"
 #include "wiegand.h"
@@ -20,13 +22,14 @@
 #include "Intercom/OpenMode.h"
 #include "Intercom/CondOpenMode.h"
 #include "Side.h"
+#include "User.h"
 
 /**
  * TODO:
- * Сделать нормальныую сигнализацию
+ * Сделать проход по времени
+ * Хранить данные на rom памяти
  * 
  * DONE:
- * Направления движения
 */
 
 /*----> Variables <----*/
@@ -130,8 +133,6 @@ Timer doorSensorTimer(0, 0);
 
 Intercom *insideIntercom = new Intercom(new NormalMode, Side::Iniside);
 Intercom *outsideIntercom = new Intercom(new NormalMode, Side::Outside);
-
-/* UART_Print print; */
 
 uint32_t
     timmeTrack = 0,
