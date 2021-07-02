@@ -9,6 +9,7 @@
         "*.tcc": "cpp",
         "vector": "cpp",
         "functional": "cpp",
+        "stm32f1xx_hal_rtc.h": "c",
         "random": "cpp"
     }
 }
