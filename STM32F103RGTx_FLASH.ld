@@ -61,8 +61,9 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 96K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 1024K
+RAM (xrw)        : ORIGIN = 0x20000000, LENGTH = 96K
+FLASH (rx)       : ORIGIN = 0x8000000, LENGTH = 1024K
+USERS_DATA(rx)   : ORIGIN = 0x806E800, LENGTH = 68K
 }
 
 /* Define output sections */
@@ -173,7 +174,14 @@ SECTIONS
     . = ALIGN(8);
   } >RAM
 
-  
+  .users_data :
+  {
+    . = ALIGN(4);
+    __users_data_start = .;
+    KEEP(*(users_data))
+    . = ALIGN(4);
+    __users_data_end = .;
+  } >USERS_DATA
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

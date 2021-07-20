@@ -64,12 +64,9 @@ Core/Src/Flags.cpp \
 Core/Src/ImpulseRelay.cpp \
 Core/Src/Intercom/ClosedMode.cpp \
 Core/Src/Intercom/CondOpenMode.cpp \
-Core/Src/Intercom/InsideIntercom.cpp \
 Core/Src/Intercom/Intercom.cpp \
-Core/Src/Intercom/Mode.cpp \
 Core/Src/Intercom/NormalMode.cpp \
 Core/Src/Intercom/OpenMode.cpp \
-Core/Src/Intercom/OutsideIntercom.cpp \
 Core/Src/InterruptPin.cpp \
 Core/Src/InvertedPinOut.cpp \
 Core/Src/PinIn.cpp \

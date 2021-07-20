@@ -1,10 +1,10 @@
 #include "Intercom/Intercom.h"
-#include "UART_Print.h"
 
-Intercom::Intercom(Mode *mode, Side side) : mode(nullptr)
+Intercom::Intercom(Mode *mode, Side side, RTC_HandleTypeDef *hrtc) : mode(nullptr)
 {
     this->TransitionTo(mode);
     this->side = side;
+    this->hrtc = hrtc;
 }
 
 Intercom::~Intercom()
@@ -25,5 +25,20 @@ void Intercom::TransitionTo(Mode *mode)
 
 bool Intercom::CheckKey(uint32_t key)
 {
-    return this->mode->CheckKey(key, this->side);
+    RTC_TimeTypeDef currentTime;
+    RTC_DateTypeDef currentDate;
+
+    HAL_RTC_GetTime(hrtc, &currentTime, RTC_FORMAT_BIN);
+    HAL_RTC_GetDate(hrtc, &currentDate, RTC_FORMAT_BIN);    
+    
+    return this->mode->CheckKey(key, this->side, currentTime, currentDate);
+}
+
+Mode::~Mode()
+{
+}
+
+void Mode::SetMode(Intercom *intercom)
+{
+    this->intercom = intercom;
 }

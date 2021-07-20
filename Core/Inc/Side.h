@@ -2,7 +2,7 @@
 
 enum class Side
 {
-    Iniside,
+    Inside,
     Outside,
     None
 };

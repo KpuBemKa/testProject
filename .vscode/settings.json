@@ -10,6 +10,18 @@
         "vector": "cpp",
         "functional": "cpp",
         "stm32f1xx_hal_rtc.h": "c",
-        "random": "cpp"
+        "random": "cpp",
+        "stm32f1xx_hal_def.h": "c",
+        "stm32f1xx.h": "c",
+        "stm32f1xx_hal.h": "c",
+        "stm32f1xx_hal_conf.h": "c",
+        "stm32f1xx_hal_rcc.h": "c",
+        "stm32_hal_legacy.h": "c",
+        "cstdint": "cpp",
+        "iostream": "cpp",
+        "system_stm32f10x.h": "c",
+        "cstring": "cpp",
+        "stm32f10x_flash.h": "c",
+        "pinout.h": "c"
     }
 }

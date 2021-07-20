@@ -4,5 +4,5 @@
 class ClosedMode : public Mode
 {
 public:
-    bool CheckKey(uint32_t key, Side side) override;
+    bool CheckKey(uint32_t key, Side side, RTC_TimeTypeDef currentTime, RTC_DateTypeDef currentDate) override;
 };

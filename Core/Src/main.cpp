@@ -20,16 +20,18 @@
 #include "Intercom/OpenMode.h"
 #include "Intercom/CondOpenMode.h"
 #include "Side.h"
-/* #include "User.h" */
 
 /**
  * TODO:
- * Сделать проход по времени
- * Хранить данные на rom памяти
- * CondOpenMode тоже должен проверять ключи
  * Сделать изменение режимов интеркома по времени
+ * Хранить настройки на rom памяти
+ * Сделать режим предоставления прохода и сам проход независимыми
+ * Сделать проверку ключа у 
  * 
  * DONE:
+ * Сделать проход по времени
+ * CondOpenMode тоже должен проверять ключи
+ * Хранить данные на rom памяти
 */
 
 /*----> Variables <----*/
@@ -59,10 +61,6 @@ uint32_t
 
 /*----> Functions Protoypes <----*/
 
-/**
- * @brief Event to track time between modes
-*/
-void TimeTrackEvent();
 /**
  * @brief Event to change work mode every 15 seconds
 */
@@ -119,26 +117,26 @@ PinOut lock(Lock_GPIO_Port, Lock_Pin);
 PinOut siren(Siren_GPIO_Port, Siren_Pin);
 
 /**
- * @brief Inside intercom zumer (#1 port, right side)
+ * @brief Inside intercom zumer (#1, right side)
 */
 InvertedPinOut insideZumer(Zumer1_GPIO_Port, Zumer1_Pin);
 /**
- * @brief Outside intercom zumer (#2 port, left side)
+ * @brief Outside intercom zumer (#2, left side)
 */
 InvertedPinOut outsideZumer(Zumer2_GPIO_Port, Zumer2_Pin);
 /**
- * @brief Inside intercom green led (#1 port, right side)
+ * @brief Inside intercom green led (#1, right side)
 */
 InvertedPinOut insideGreenLed(GreenLed_1_GPIO_Port, GreenLed_1_Pin);
 /**
- * @brief Outside intercom green led (#2 port, left side)
+ * @brief Outside intercom green led (#2, left side)
 */
 InvertedPinOut outsideGreenLed(GreenLed_2_GPIO_Port, GreenLed_2_Pin);
 
 Timer doorSensorTimer(0, 0);
 
-Intercom *insideIntercom = new Intercom(new NormalMode, Side::Iniside);
-Intercom *outsideIntercom = new Intercom(new NormalMode, Side::Outside);
+Intercom *insideIntercom = new Intercom(new NormalMode, Side::Inside, &hrtc);
+Intercom *outsideIntercom = new Intercom(new NormalMode, Side::Outside, &hrtc);
 
 RTC_TimeTypeDef currentTime = {0};
 RTC_DateTypeDef currentDate = {0};
@@ -152,25 +150,10 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
 
-  HAL_RTC_GetTime(&hrtc, &currentTime, RTC_FORMAT_BIN);
-  HAL_RTC_GetDate(&hrtc, &currentDate, RTC_FORMAT_BIN);
-
-  UART_Printf("Current time: %d:%d:%d\r\n", currentTime.Hours, currentTime.Minutes, currentTime.Seconds);
-  UART_Printf("Current date: %d-%d-20%d", currentDate.Date, currentDate.Month, currentDate.Year);
-  HAL_Delay(2000);
-  UART_Printf("Current time: %d:%d:%d\r\n", currentTime.Hours, currentTime.Minutes, currentTime.Seconds);
-  UART_Printf("Current date: %d-%d-20%d", currentDate.Date, currentDate.Month, currentDate.Year);
-
-  UART_Printf("\nSwitched to Normal mode.\r\n");
-  insideGreenLed.turnOff();
-  outsideGreenLed.turnOff();
-  insideZumer.turnOff();
-  outsideZumer.turnOff();
+  UART_Printf("\nLoaded.\r\n");
 
   while (1)
   {
-    TimeTrackEvent();
-
     ChangeModeEvent();
 
     DoorSensorEvent();
@@ -191,8 +174,14 @@ int main(void)
 
 /* Events */
 
-void TimeTrackEvent()
+void ChangeModeEvent()
 {
+  /* if ((HAL_GetTick() - timme) > 15000)
+  {
+    timme = HAL_GetTick();
+    switchMode();
+  } */
+
   if ((HAL_GetTick() - timmeTrack) > 5000)
   {
     UART_Printf("Time passed: %d%s\r\n", (HAL_GetTick() - timme) / 1000, " sec.");
@@ -200,18 +189,9 @@ void TimeTrackEvent()
   }
 }
 
-void ChangeModeEvent()
-{
-  if ((HAL_GetTick() - timme) > 15000)
-  {
-    timme = HAL_GetTick();
-    switchMode();
-  }
-}
-
 void DoorSensorEvent()
 {
-  if (HAL_GetTick() - doorSensorTimer.getStartTime() > 100 && doorSensorFirstTime == false)
+  if (doorSensorFirstTime == false && HAL_GetTick() - doorSensorTimer.getStartTime() > 100)
   {
     door.setStateChanged();
 
@@ -224,7 +204,7 @@ void DoorSensorEvent()
       UART_Printf("Door was opened.\r\n");
     }
 
-    if ((workMode != WorkMode::TempOpenMode && intercomMode != IntercomMode::OpenMode) && door.getState() == State::On)
+    if (door.getState() == State::On && (workMode != WorkMode::TempOpenMode && intercomMode != IntercomMode::OpenMode))
     {
       workMode = WorkMode::AlarmMode;
     }
@@ -559,8 +539,8 @@ void switchMode()
   case IntercomMode::CondOpenMode:
   {
     UART_Printf("\nSwitched to Normal mode.\r\n");
-    insideIntercom->TransitionTo(new NormalMode);
-    outsideIntercom->TransitionTo(new NormalMode);
+    insideIntercom->TransitionTo(new NormalMode /* (&hrtc) */);
+    outsideIntercom->TransitionTo(new NormalMode /* (&hrtc) */);
     intercomMode = IntercomMode::NormalMode;
     lock.turnOff();
     break;
@@ -568,8 +548,8 @@ void switchMode()
   default:
   {
     UART_Printf("Unknown mode, switched to normal.\r\n");
-    insideIntercom->TransitionTo(new NormalMode);
-    outsideIntercom->TransitionTo(new NormalMode);
+    insideIntercom->TransitionTo(new NormalMode /* (&hrtc) */);
+    outsideIntercom->TransitionTo(new NormalMode /* (&hrtc) */);
     intercomMode = IntercomMode::NormalMode;
     lock.turnOff();
     break;
@@ -594,11 +574,13 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_LSE;
-  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -606,17 +588,17 @@ void SystemClock_Config(void)
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -645,7 +627,7 @@ static void MX_RTC_Init(void)
   */
   hrtc.Instance = RTC;
   hrtc.Init.AsynchPrediv = RTC_AUTO_1_SECOND;
-  hrtc.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
+  hrtc.Init.OutPut = RTC_OUTPUTSOURCE_ALARM;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
   {
     Error_Handler();
@@ -657,17 +639,17 @@ static void MX_RTC_Init(void)
 
   /** Initialize RTC and set the Time and Date
   */
-  sTime.Hours = 0;
-  sTime.Minutes = 0;
+  sTime.Hours = 17;
+  sTime.Minutes = 20;
   sTime.Seconds = 0;
 
   if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
   {
     Error_Handler();
   }
-  DateToUpdate.WeekDay = RTC_WEEKDAY_FRIDAY;
+  DateToUpdate.WeekDay = RTC_WEEKDAY_SUNDAY;
   DateToUpdate.Month = RTC_MONTH_JULY;
-  DateToUpdate.Date = 7;
+  DateToUpdate.Date = 4;
   DateToUpdate.Year = 21;
 
   if (HAL_RTC_SetDate(&hrtc, &DateToUpdate, RTC_FORMAT_BIN) != HAL_OK)
@@ -675,6 +657,7 @@ static void MX_RTC_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN RTC_Init 2 */
+
   /* USER CODE END RTC_Init 2 */
 }
 
@@ -724,13 +707,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : Zumer1_Pin Zumer2_Pin GreenLed_1_Pin GreenLed_2_Pin */
-  /*  GPIO_InitStruct.Pin = Zumer1_Pin | Zumer2_Pin | GreenLed_1_Pin | GreenLed_2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct); */
 
   /*Configure GPIO pin : Door_Pin */
   GPIO_InitStruct.Pin = Door_Pin;

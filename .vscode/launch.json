@@ -3,7 +3,7 @@
         {
             "showDevDebugOutput": true,
             "cwd": "${workspaceRoot}",
-            "executable": "./build/TestProject.elf",
+            "executable": "./build/acms.elf",
             "name": "Debug STM32",
             "request": "launch",
             "type": "cortex-debug",
