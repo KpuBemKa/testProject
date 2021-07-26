@@ -9,7 +9,8 @@
 */
 enum class WorkMode
 {
-  TempOpenMode,
+  GrantAccessMode,
+  PassageMode,
   DenyMode,
   TempAlarmMode,
   AlarmMode,

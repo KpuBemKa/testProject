@@ -1,4 +1,3 @@
-/*----> Includes <----*/
 #include <cstdarg>
 #include <cstring>
 #include <cstdio>
@@ -24,22 +23,26 @@
 /**
  * TODO:
  * Сделать изменение режимов интеркома по времени
- * Хранить настройки на rom памяти
- * Сделать режим предоставления прохода и сам проход независимыми
- * Сделать проверку ключа у 
+ * Сделать логи
  * 
  * DONE:
  * Сделать проход по времени
  * CondOpenMode тоже должен проверять ключи
  * Хранить данные на rom памяти
+ * Сделать режим предоставления прохода и сам проход независимыми
 */
+
+/*----> Settings <----*/
+
+#define GrantTime 5000     // Время, которое предоставляется на открытие двери для прохода
+#define PassageTime 5000   // Время, которое предоставляется на сам проход
 
 /*----> Variables <----*/
 RTC_HandleTypeDef hrtc;
 UART_HandleTypeDef huart1;
 volatile uint8_t wig_flag_inrt = 1;
 
-/*----> STM Init Fucntion Prototypes <----*/
+/*----> STM Init Fucntions Prototypes <----*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
@@ -47,7 +50,6 @@ static void MX_RTC_Init(void);
 
 IntercomMode intercomMode = IntercomMode::NormalMode;
 WorkMode workMode = WorkMode::NoMode, previousWorkMode = WorkMode::NoMode;
-
 bool
     insideKeyRead = false,
     outsideKeyRead = false,
@@ -77,10 +79,8 @@ void KeyReadEvent();
  * @brief Event to listen for pressed buttons
 */
 void ButtonPressedEvent();
-/**
- * @brief Event to listen for switching to temporarily opened mode, giving access to enter
-*/
-void TempOpenModeEvent();
+void GrantAccessEvent();
+void PassageEvent();
 /**
  * @brief Event to handle temporarily alarm, activated when exceeded time to enter
 */
@@ -162,7 +162,9 @@ int main(void)
 
     ButtonPressedEvent();
 
-    TempOpenModeEvent();
+    GrantAccessEvent();
+
+    PassageEvent();
 
     TempAlarmEvent();
 
@@ -182,11 +184,11 @@ void ChangeModeEvent()
     switchMode();
   } */
 
-  if ((HAL_GetTick() - timmeTrack) > 5000)
+  /* if ((HAL_GetTick() - timmeTrack) > 5000)
   {
     UART_Printf("Time passed: %d%s\r\n", (HAL_GetTick() - timme) / 1000, " sec.");
     timmeTrack = HAL_GetTick();
-  }
+  } */
 }
 
 void DoorSensorEvent()
@@ -204,7 +206,7 @@ void DoorSensorEvent()
       UART_Printf("Door was opened.\r\n");
     }
 
-    if (door.getState() == State::On && (workMode != WorkMode::TempOpenMode && intercomMode != IntercomMode::OpenMode))
+    if (door.getState() == State::On && (workMode != WorkMode::GrantAccessMode && workMode != WorkMode::PassageMode && intercomMode != IntercomMode::OpenMode))
     {
       workMode = WorkMode::AlarmMode;
     }
@@ -234,7 +236,7 @@ void KeyReadEvent()
                       : UART_Printf("Outside intercom gave permission. Key id: %d\r\n", getCode());
 
       door.isStateChanged();
-      workMode = WorkMode::TempOpenMode;
+      workMode = WorkMode::GrantAccessMode;
     }
     else
     {
@@ -254,7 +256,7 @@ void ButtonPressedEvent()
   {
     UART_Printf("%s button was used.\r\n", insideButtonPressed ? "Inside" : "Outside");
 
-    workMode = WorkMode::TempOpenMode;
+    workMode = WorkMode::GrantAccessMode;
 
     if (intercomMode == IntercomMode::CondOpenMode)
     {
@@ -267,12 +269,12 @@ void ButtonPressedEvent()
   }
 }
 
-void TempOpenModeEvent()
+void GrantAccessEvent()
 {
   static Timer lockTimer(0, 0);
   static Timer zumerTimer(0, 0);
 
-  if (workMode == WorkMode::TempOpenMode)
+  if (workMode == WorkMode::GrantAccessMode)
   {
     static bool firstTime = true;
     if (firstTime)
@@ -282,7 +284,64 @@ void TempOpenModeEvent()
       lockTimer.start();
     }
 
-    if (HAL_GetTick() - lockTimer.getStartTime() < 5000 && !(door.getState() == State::Off && door.isStateChanged()))
+    if (HAL_GetTick() - lockTimer.getStartTime() < GrantTime && !(door.getState() == State::On && door.isStateChanged()))
+    {
+      if (HAL_GetTick() - zumerTimer.getLastTick() > 250)
+      {
+        zumerTimer.setLastTick();
+        insideZumer.turnOn();
+        outsideZumer.turnOn();
+        insideGreenLed.turnOn();
+        outsideGreenLed.turnOn();
+      }
+
+      if (HAL_GetTick() - zumerTimer.getLastTick() > 75)
+      {
+        insideZumer.turnOff();
+        outsideZumer.turnOff();
+        insideGreenLed.turnOff();
+        outsideGreenLed.turnOff();
+      }
+    }
+    else if (HAL_GetTick() - lockTimer.getStartTime() >= GrantTime)
+    {
+      UART_Printf("Door was not opened. Closing the relay.\r\n");
+      workMode = WorkMode::NoMode;
+      firstTime = true;
+      lock.turnOff();
+      insideZumer.turnOff();
+      outsideZumer.turnOff();
+      insideGreenLed.turnOff();
+      outsideGreenLed.turnOff();
+    }
+    else
+    {
+      insideZumer.turnOff();
+      outsideZumer.turnOff();
+      insideGreenLed.turnOff();
+      outsideGreenLed.turnOff();
+      workMode = WorkMode::PassageMode;
+      firstTime = true;
+    }
+  }
+}
+
+void PassageEvent()
+{
+  static Timer PassageTimer(0, 0);
+  static Timer zumerTimer(0, 0);
+
+  if (workMode == WorkMode::PassageMode)
+  {
+    static bool firstTime = true;
+    if (firstTime)
+    {
+      firstTime = false;
+      lock.turnOn();
+      PassageTimer.start();
+    }
+
+    if (HAL_GetTick() - PassageTimer.getStartTime() < PassageTime && !(door.getState() == State::Off && door.isStateChanged()))
     {
       if (HAL_GetTick() - zumerTimer.getLastTick() > 250)
       {
@@ -305,14 +364,10 @@ void TempOpenModeEvent()
     {
       UART_Printf("Door is still opened. Turning on temporarily alarm.\r\n");
       workMode = WorkMode::TempAlarmMode;
+      UART_Printf("test2\r\n");
     }
     else
     {
-      if (HAL_GetTick() - lockTimer.getStartTime() >= 5000)
-      {
-        UART_Printf("Door was not opened. Closing the relay.\r\n");
-      }
-
       workMode = WorkMode::NoMode;
       firstTime = true;
       lock.turnOff();

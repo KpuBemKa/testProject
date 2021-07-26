@@ -22,6 +22,11 @@
         "system_stm32f10x.h": "c",
         "cstring": "cpp",
         "stm32f10x_flash.h": "c",
-        "pinout.h": "c"
+        "pinout.h": "c",
+        "string": "c",
+        "istream": "c",
+        "new": "c",
+        "ostream": "c",
+        "typeinfo": "c"
     }
 }

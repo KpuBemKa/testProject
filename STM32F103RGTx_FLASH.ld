@@ -64,6 +64,7 @@ MEMORY
 RAM (xrw)        : ORIGIN = 0x20000000, LENGTH = 96K
 FLASH (rx)       : ORIGIN = 0x8000000, LENGTH = 1024K
 USERS_DATA(rx)   : ORIGIN = 0x806E800, LENGTH = 68K
+SETTINGS(rx)     : ORIGIN = 0x806F6CC, LENGTH = 4K
 }
 
 /* Define output sections */
@@ -178,10 +179,17 @@ SECTIONS
   {
     . = ALIGN(4);
     __users_data_start = .;
-    KEEP(*(users_data))
     . = ALIGN(4);
     __users_data_end = .;
   } >USERS_DATA
+
+  .settings :
+  {
+    . = ALIGN(4);
+    __settings_start = .;
+    . = ALIGN(4);
+    settings_end = .;
+  } > SETTINGS
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
