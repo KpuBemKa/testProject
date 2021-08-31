@@ -1,5 +1,31 @@
 #pragma once
+#include <stdio.h>
+#include <string.h>
 #include "stm32f1xx_hal.h"
+#include "IntercomMode.h"
+
+enum class RecievedMessage : uint8_t
+{
+    ChangeID = 1,
+    NetworkSettings = 2,
+    ServerAdress = 3,
+    EnableDHCP = 4,
+    EntranceTime = 5,
+    LockOpenTime = 6,
+    RelayWorkMode = 7,
+    sd = 8,
+    LockImpulseTime = 9,
+    SirenType = 10,
+    SirenTimeout = 11,
+    ChangeUser = 12,
+    ChangeUserSchedule = 13,
+    ChangeIntercomSchedule = 14,
+    DeleteUser = 15,
+    DoorUnlock = 16,
+    IntercomModeChange = 17,
+    SirenStop = 18,
+    SendMemoryStatus = 19
+};
 
 enum class EventType : uint8_t
 {
@@ -14,11 +40,10 @@ enum class EventType : uint8_t
     SirenEnd = 9,
     IntercomModeChange = 10,
     SystemOn = 11,
-    Text = 100,
     ExecutionResult = 200
 };
 
-enum class Direction : uint8_t
+enum class Side : uint8_t
 {
     In = 1,
     Out = 2
@@ -32,123 +57,189 @@ enum class DenyReason : uint8_t
     InvalidSchedule = 4
 };
 
-enum class OpenedDoorReason
+enum class OpenedDoorReason : uint8_t
 {
     AllowedOpening = 1,
     DeniedOpening = 2
 };
 
-enum class EntranceAllowedReason
+enum class EntranceAllowedReason : uint8_t
 {
     EntranceByKey = 1,
     OpenMode = 2,
     ServerGrant = 3
 };
 
-enum class AlarmStartReason
+enum class AlarmStartReason : uint8_t
 {
-    ForbiddenPassage = 1,
-    LongPassage = 2
+    LongPassage = 1
 };
 
-enum class AlarmEndReason
+enum class AlarmEndReason : uint8_t
 {
     ClosedDoor = 1,
     AllowedPasage = 2,
     RemoteEnd = 3
 };
 
-enum class SirenEndReason
+enum class SirenStartReason : uint8_t
+{
+    ForbiddenPassage = 1
+};
+
+enum class SirenEndReason : uint8_t
 {
     EndTime = 1,
-
 };
 
-/* -==< Event Types >==- */
-
-struct AccessRequest
+enum class ModeChangeReason : uint8_t
 {
-    Direction direction;
-    uint32_t keyID;
-};
-
-struct AccessGranted
-{
-};
-
-struct AccessDenied
-{
-    DenyReason denyReason;
-};
-
-struct OpenedDoor
-{
-};
-
-struct DoorClosed
-{
-};
-
-struct AlarmStart
-{
-};
-
-struct AlarmEnd
-{
-};
-
-struct SirenStart
-{
-};
-
-struct SirenEnd
-{
-};
-
-struct IntercomModeChange
-{
-};
-
-struct SystemOn
-{
-};
-
-struct Text
-{
-};
-
-struct ExecutionResult
-{
-};
-
-union LogMessage
-{
-    AccessRequest accessRequest;
-    AccessGranted accessGranted;
-    AccessDenied accessDenied;
-    OpenedDoor openedDoor;
-    DoorClosed doorClosed;
-    AlarmStart alarmStart;
-    AlarmEnd alarmEnd;
-    SirenStart sirenStart;
-    SirenEnd sirenEnd;
-    IntercomModeChange intercomModeChange;
-    SystemOn systemOn;
-    Text text;
-    ExecutionResult executionResult;
-
-    uint8_t logMessage[5];
+    BySchedule = 1,
+    ByServer = 2,
+    ByKey = 3,
+    ByServerWithBlocking = 4
 };
 
 struct Log
 {
+private:
     EventType eventType;
-    LogMessage logMessage;
+
+protected:
+    Log(EventType eventType)
+    {
+        this->eventType = eventType;
+    }
+
+public:
+    uint8_t GetSize()
+    {
+        switch (this->eventType)
+        {
+        case EventType::AccessRequest:
+            return 6;
+            break;
+        default:
+            return 1;
+            break;
+        }
+    }
 };
 
-void Logging()
+/* -==< Event Types >==- */
+
+struct AccessRequest : Log
 {
-    Log log;
-    log.eventType = EventType::AccessRequest;
-    log.logMessage.accessRequest.direction = Direction::In;
+    Side side;
+    uint32_t keyID;
+
+    AccessRequest() : Log(EventType::AccessRequest)
+    {
+    }
+};
+
+struct AccessGranted : Log
+{
+    AccessGranted() : Log(EventType::AccessGranted)
+    {
+    }
+};
+
+struct AccessDenied : Log
+{
+    DenyReason denyReason;
+
+    AccessDenied() : Log(EventType::AccessDenied)
+    {
+    }
+};
+
+struct DoorOpened : Log
+{
+    OpenedDoorReason openedDoorReason;
+    EntranceAllowedReason entranceAllowedReason;
+
+    DoorOpened() : Log(EventType::DoorOpened)
+    {
+    }
+};
+
+struct DoorClosed : Log
+{
+    DoorClosed() : Log(EventType::DoorClosed)
+    {
+    }
+};
+
+struct AlarmStart : Log
+{
+    AlarmStartReason alarmstartReason;
+
+    AlarmStart() : Log(EventType::AlarmStart)
+    {
+    }
+};
+
+struct AlarmEnd : Log
+{
+    AlarmEndReason alarmEndReason;
+
+    AlarmEnd() : Log(EventType::AlarmEnd)
+    {
+    }
+};
+
+struct SirenStart : Log
+{
+    SirenStartReason sirenStartReason;
+
+    SirenStart() : Log(EventType::SirenStart)
+    {
+    }
+};
+
+struct SirenEnd : Log
+{
+    SirenEndReason sirenEndReason;
+
+    SirenEnd() : Log(EventType::SirenEnd)
+    {
+    }
+};
+
+struct IntercomModeChange : Log
+{
+    Side side;
+    IntercomMode intercomMode;
+    ModeChangeReason modeChangeReason;
+
+    IntercomModeChange() : Log(EventType::IntercomModeChange)
+    {
+    }
+};
+
+struct SystemOn : Log
+{
+    SystemOn() : Log(EventType::SystemOn)
+    {
+    }
+};
+
+struct ExecutionResult : Log
+{
+    RecievedMessage recievedMessage;
+    bool isAttemptSuccessful;
+};
+
+void Logging(Log log)
+{
+    uint8_t array[6];
+    memcpy(&array, &log, log.GetSize());
+}
+
+void test()
+{
+    AccessRequest accessRequest;
+    accessRequest.side = Side::In;
+    accessRequest.keyID = 108734;
 }

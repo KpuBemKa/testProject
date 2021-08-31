@@ -27,6 +27,7 @@
         "istream": "c",
         "new": "c",
         "ostream": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "intercommode.h": "c"
     }
 }
