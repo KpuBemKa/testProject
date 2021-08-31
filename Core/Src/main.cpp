@@ -61,6 +61,8 @@ uint32_t
     timmeTrack = 0,
     timme = 0;
 
+int logs[512];
+
 /*----> Functions Protoypes <----*/
 
 /**
@@ -178,17 +180,17 @@ int main(void)
 
 void ChangeModeEvent()
 {
-  /* if ((HAL_GetTick() - timme) > 15000)
+  if ((HAL_GetTick() - timme) > 15000)
   {
     timme = HAL_GetTick();
     switchMode();
-  } */
+  }
 
-  /* if ((HAL_GetTick() - timmeTrack) > 5000)
+  if ((HAL_GetTick() - timmeTrack) > 5000)
   {
     UART_Printf("Time passed: %d%s\r\n", (HAL_GetTick() - timme) / 1000, " sec.");
     timmeTrack = HAL_GetTick();
-  } */
+  }
 }
 
 void DoorSensorEvent()
@@ -305,14 +307,14 @@ void GrantAccessEvent()
     }
     else if (HAL_GetTick() - lockTimer.getStartTime() >= GrantTime)
     {
-      UART_Printf("Door was not opened. Closing the relay.\r\n");
-      workMode = WorkMode::NoMode;
-      firstTime = true;
       lock.turnOff();
       insideZumer.turnOff();
       outsideZumer.turnOff();
       insideGreenLed.turnOff();
       outsideGreenLed.turnOff();
+      UART_Printf("Door was not opened. Closing the relay.\r\n");
+      workMode = WorkMode::NoMode;
+      firstTime = true;
     }
     else
     {
@@ -364,7 +366,6 @@ void PassageEvent()
     {
       UART_Printf("Door is still opened. Turning on temporarily alarm.\r\n");
       workMode = WorkMode::TempAlarmMode;
-      UART_Printf("test2\r\n");
     }
     else
     {

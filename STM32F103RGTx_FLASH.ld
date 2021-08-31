@@ -183,14 +183,6 @@ SECTIONS
     __users_data_end = .;
   } >USERS_DATA
 
-  .settings :
-  {
-    . = ALIGN(4);
-    __settings_start = .;
-    . = ALIGN(4);
-    settings_end = .;
-  } > SETTINGS
-
   /* Remove information from the standard libraries */
   /DISCARD/ :
   {
